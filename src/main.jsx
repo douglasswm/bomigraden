@@ -11,15 +11,22 @@ import {
   RotateCcw,
   Trash2,
   Undo2,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import "./styles.css";
 
 const CANVAS_SIZE = 220;
 const STORAGE_KEY = "bomigarden-state";
+const BACKGROUND_AUDIO_SRC = "/assets/audio/cat_sound.mp3";
 const CAT_WALK_DURATION = 6200;
 const CAT_REST_DURATION = 2200;
 const CAT_JUMP_DURATION = 2400;
 const CAT_TICK_MS = 1000 / 60;
+const CAT_COLLISION_DISTANCE = 12.5;
+const CAT_COLLISION_REARM_DISTANCE = 16;
+const CAT_INTERACTION_COOLDOWN_MS = 3000;
+const CAT_RESTORE_SPACING = 7.2;
 const CAT_TAP_MODES = ["idle", "walk", "sleeping", "jumping", "rolling_over"];
 const CAT_CONTROL_OPTIONS = [
   { action: "idle", label: "Idle" },
@@ -38,7 +45,7 @@ const CAT_WAYPOINTS = [
   { x: 25, y: 72 },
   { x: 34, y: 56 },
 ];
-const TUXEDO_WAYPOINTS = [
+const SNOW_WAYPOINTS = [
   { x: 67, y: 58 },
   { x: 77, y: 49 },
   { x: 69, y: 38 },
@@ -62,6 +69,13 @@ const CAT_ACTION_LABELS = {
   rolling_over: "rolling over",
 };
 const CAT_LOOPING_ACTIONS = new Set(["idle", "walk", "sleeping"]);
+const CAT_ONE_SHOT_ACTIONS = new Set(["jumping", "rolling_over"]);
+const DUO_INTERACTION_FRAME_DURATION = 280;
+const DUO_INTERACTION_FRAMES = Array.from(
+  { length: 10 },
+  (_, index) =>
+    `/assets/cat/duo-interaction/frames/duo_play_${String(index + 1).padStart(2, "0")}.png`
+);
 
 function createCatFrames(basePath, action) {
   return Array.from(
@@ -101,8 +115,8 @@ const catSpritePacks = {
       },
     },
   },
-  tuxedo: {
-    label: "Tuxedo",
+  snow: {
+    label: "Snow",
     scale: 0.4,
     actions: Object.fromEntries(
       CAT_TAP_MODES.map((action) => [action, createCatAction("/assets/cat/tuxedo", action)])
@@ -136,6 +150,26 @@ function clampToGarden(x, y) {
     const distance = Math.hypot(point.x - x, point.y - y);
     return distance < closest.distance ? { point, distance } : closest;
   }, { point: CAT_WAYPOINTS[0], distance: Infinity }).point;
+}
+
+function distanceBetweenPoints(first, second) {
+  return Math.hypot(first.x - second.x, first.y - second.y);
+}
+
+function getMidpoint(first, second) {
+  return {
+    x: (first.x + second.x) / 2,
+    y: (first.y + second.y) / 2,
+  };
+}
+
+function nudgeGardenPoint(origin, offsetX, offsetY = 0) {
+  const point = {
+    x: origin.x + offsetX,
+    y: origin.y + offsetY,
+  };
+
+  return isPointOnGarden(point.x, point.y) ? point : clampToGarden(point.x, point.y);
 }
 
 const palette = [
@@ -460,6 +494,7 @@ function AnimatedCat({
   onModeChange,
   onActionComplete,
   onTargetReached,
+  onPositionChange,
   className = "",
 }) {
   const catRef = React.useRef(null);
@@ -494,6 +529,7 @@ function AnimatedCat({
     catRef.current.style.setProperty("--cat-x", `${position.x}%`);
     catRef.current.style.setProperty("--cat-y", `${position.y}%`);
     catRef.current.style.setProperty("--cat-depth", Math.round(position.y * 10));
+    onPositionChange?.(position);
   }
 
   function syncCatJumpVisual(progress = 0) {
@@ -508,6 +544,11 @@ function AnimatedCat({
     catRef.current.style.setProperty("--cat-shadow-scale", shadowScale.toFixed(3));
     catRef.current.style.setProperty("--cat-shadow-opacity", shadowOpacity.toFixed(3));
   }
+
+  React.useEffect(() => {
+    positionRef.current = initialPosition;
+    syncCatPosition(initialPosition);
+  }, [initialPosition]);
 
   function clearCatTimers() {
     window.clearTimeout(restTimerRef.current);
@@ -766,27 +807,87 @@ function AnimatedCat({
   );
 }
 
-function CalicoCat(props) {
+function CalicoCat({ initialPosition = CAT_WAYPOINTS[0], ...props }) {
   return (
     <AnimatedCat
       {...props}
       className="calico-cat"
       spritePack={catSpritePacks.calico}
       waypoints={CAT_WAYPOINTS}
-      initialPosition={CAT_WAYPOINTS[0]}
+      initialPosition={initialPosition}
     />
   );
 }
 
-function TuxedoCat(props) {
+function SnowCat({ initialPosition = SNOW_WAYPOINTS[0], ...props }) {
   return (
     <AnimatedCat
       {...props}
-      className="tuxedo-cat"
-      spritePack={catSpritePacks.tuxedo}
-      waypoints={TUXEDO_WAYPOINTS}
-      initialPosition={TUXEDO_WAYPOINTS[0]}
+      className="snow-cat"
+      spritePack={catSpritePacks.snow}
+      waypoints={SNOW_WAYPOINTS}
+      initialPosition={initialPosition}
     />
+  );
+}
+
+function CatDuoInteraction({ position, onComplete }) {
+  const [frameIndex, setFrameIndex] = React.useState(0);
+  const frameRafRef = React.useRef(null);
+  const startedAtRef = React.useRef(0);
+  const completedRef = React.useRef(false);
+
+  usePreloadImages(DUO_INTERACTION_FRAMES);
+
+  React.useEffect(() => {
+    startedAtRef.current = performance.now();
+    completedRef.current = false;
+    setFrameIndex(0);
+
+    function step(now) {
+      const elapsed = now - startedAtRef.current;
+      const nextFrame = Math.floor(elapsed / DUO_INTERACTION_FRAME_DURATION);
+
+      if (nextFrame >= DUO_INTERACTION_FRAMES.length) {
+        setFrameIndex(DUO_INTERACTION_FRAMES.length - 1);
+        if (!completedRef.current) {
+          completedRef.current = true;
+          onComplete?.();
+        }
+        return;
+      }
+
+      setFrameIndex(nextFrame);
+      frameRafRef.current = window.requestAnimationFrame(step);
+    }
+
+    frameRafRef.current = window.requestAnimationFrame(step);
+
+    return () => {
+      if (frameRafRef.current) {
+        window.cancelAnimationFrame(frameRafRef.current);
+      }
+    };
+  }, [onComplete]);
+
+  return (
+    <div
+      className="cat-duo-interaction"
+      aria-label="Calico and snow cat interaction"
+      style={{
+        "--duo-x": `${position.x}%`,
+        "--duo-y": `${position.y}%`,
+        "--duo-depth": Math.round(position.y * 10) + 14,
+      }}
+    >
+      <div className="cat-duo-shadow" />
+      <img
+        className="cat-duo-frame"
+        src={DUO_INTERACTION_FRAMES[frameIndex]}
+        alt=""
+        draggable="false"
+      />
+    </div>
   );
 }
 
@@ -797,14 +898,20 @@ function GardenScene({
   catWalking,
   catTarget,
   catAction,
-  tuxedoWalking,
-  tuxedoAction,
+  catSpawn,
+  snowWalking,
+  snowAction,
+  snowSpawn,
+  duoInteraction,
   onCatTarget,
   onCatTargetReached,
   onCatModeChange,
   onCatActionComplete,
-  onTuxedoModeChange,
-  onTuxedoActionComplete,
+  onCalicoPositionChange,
+  onSnowModeChange,
+  onSnowActionComplete,
+  onSnowPositionChange,
+  onDuoInteractionComplete,
   onPlant,
 }) {
   function handleGardenClick(event) {
@@ -818,7 +925,9 @@ function GardenScene({
       return;
     }
 
-    onCatTarget(clampToGarden(x, y));
+    if (!duoInteraction) {
+      onCatTarget(clampToGarden(x, y));
+    }
   }
 
   return (
@@ -854,20 +963,36 @@ function GardenScene({
             }}
           />
         ))}
-        <CalicoCat
-          autoWalk={catWalking}
-          target={catTarget}
-          requestedAction={catAction}
-          onModeChange={onCatModeChange}
-          onTargetReached={onCatTargetReached}
-          onActionComplete={onCatActionComplete}
-        />
-        <TuxedoCat
-          autoWalk={tuxedoWalking}
-          requestedAction={tuxedoAction}
-          onModeChange={onTuxedoModeChange}
-          onActionComplete={onTuxedoActionComplete}
-        />
+        {duoInteraction ? (
+          <CatDuoInteraction
+            key={duoInteraction.id}
+            position={duoInteraction.position}
+            onComplete={onDuoInteractionComplete}
+          />
+        ) : (
+          <>
+            <CalicoCat
+              key={`calico-${catSpawn.version}`}
+              initialPosition={catSpawn.position}
+              autoWalk={catWalking}
+              target={catTarget}
+              requestedAction={catAction}
+              onModeChange={onCatModeChange}
+              onTargetReached={onCatTargetReached}
+              onActionComplete={onCatActionComplete}
+              onPositionChange={onCalicoPositionChange}
+            />
+            <SnowCat
+              key={`snow-${snowSpawn.version}`}
+              initialPosition={snowSpawn.position}
+              autoWalk={snowWalking}
+              requestedAction={snowAction}
+              onModeChange={onSnowModeChange}
+              onActionComplete={onSnowActionComplete}
+              onPositionChange={onSnowPositionChange}
+            />
+          </>
+        )}
         {plantMode && (
           <img
             className="plant-preview"
@@ -948,7 +1073,7 @@ function getVisibleCatMode(isWalking, action) {
   return isWalking ? "walk" : action;
 }
 
-function CatModeControls({ title, currentMode, onSelect }) {
+function CatModeControls({ title, currentMode, onSelect, disabled = false }) {
   return (
     <div className="cat-control-group">
       <h3>{title}</h3>
@@ -958,6 +1083,7 @@ function CatModeControls({ title, currentMode, onSelect }) {
             key={option.action}
             className={currentMode === option.action ? "cat-control-button active" : "cat-control-button"}
             type="button"
+            disabled={disabled}
             onClick={() => onSelect(option.action)}
           >
             {option.label}
@@ -968,8 +1094,13 @@ function CatModeControls({ title, currentMode, onSelect }) {
   );
 }
 
-function OpeningLetter() {
+function OpeningLetter({ onEnterGarden }) {
   const [isVisible, setIsVisible] = React.useState(true);
+
+  function enterGarden() {
+    onEnterGarden?.();
+    setIsVisible(false);
+  }
 
   if (!isVisible) return null;
 
@@ -1010,7 +1141,7 @@ function OpeningLetter() {
           />
         </div>
       </div>
-      <button className="letter-close" type="button" onClick={() => setIsVisible(false)}>
+      <button className="letter-close" type="button" onClick={enterGarden}>
         Enter garden
       </button>
     </section>
@@ -1023,21 +1154,81 @@ function App() {
   const [brushSize, setBrushSize] = React.useState(9);
   const [tool, setTool] = React.useState("brush");
   const [plantMode, setPlantMode] = React.useState(true);
+  const [catSpawn, setCatSpawn] = React.useState({
+    position: CAT_WAYPOINTS[0],
+    version: 0,
+  });
   const [catWalking, setCatWalking] = React.useState(false);
   const [catTarget, setCatTarget] = React.useState(null);
   const [catAction, setCatAction] = React.useState("idle");
-  const [tuxedoWalking, setTuxedoWalking] = React.useState(false);
-  const [tuxedoAction, setTuxedoAction] = React.useState("idle");
+  const [snowSpawn, setSnowSpawn] = React.useState({
+    position: SNOW_WAYPOINTS[0],
+    version: 0,
+  });
+  const [snowWalking, setSnowWalking] = React.useState(false);
+  const [snowAction, setSnowAction] = React.useState("idle");
+  const [duoInteraction, setDuoInteraction] = React.useState(null);
+  const [isMusicPlaying, setIsMusicPlaying] = React.useState(false);
   const [showGallery, setShowGallery] = React.useState(false);
   const [undoSignal, setUndoSignal] = React.useState(0);
   const [clearSignal, setClearSignal] = React.useState(0);
+  const calicoPositionRef = React.useRef(CAT_WAYPOINTS[0]);
+  const snowPositionRef = React.useRef(SNOW_WAYPOINTS[0]);
+  const duoInteractionRef = React.useRef(null);
+  const duoCanTriggerRef = React.useRef(true);
+  const duoCooldownUntilRef = React.useRef(0);
+  const backgroundAudioRef = React.useRef(null);
+
+  React.useEffect(() => {
+    duoInteractionRef.current = duoInteraction;
+  }, [duoInteraction]);
 
   const completeCatAction = React.useCallback(() => {
     setCatAction("idle");
   }, []);
 
-  const completeTuxedoAction = React.useCallback(() => {
-    setTuxedoAction("idle");
+  const startBackgroundAudio = React.useCallback(() => {
+    const audio = backgroundAudioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0.42;
+    audio.loop = true;
+    void audio
+      .play()
+      .then(() => setIsMusicPlaying(true))
+      .catch(() => {
+        // Browsers may still block audio in unusual permission states.
+        setIsMusicPlaying(false);
+      });
+  }, []);
+
+  const stopBackgroundAudio = React.useCallback(() => {
+    const audio = backgroundAudioRef.current;
+    if (!audio) return;
+
+    audio.pause();
+    setIsMusicPlaying(false);
+  }, []);
+
+  const toggleBackgroundAudio = React.useCallback(() => {
+    if (isMusicPlaying) {
+      stopBackgroundAudio();
+      return;
+    }
+
+    startBackgroundAudio();
+  }, [isMusicPlaying, startBackgroundAudio, stopBackgroundAudio]);
+
+  const completeSnowAction = React.useCallback(() => {
+    setSnowAction("idle");
+  }, []);
+
+  const updateCalicoPosition = React.useCallback((position) => {
+    calicoPositionRef.current = position;
+  }, []);
+
+  const updateSnowPosition = React.useCallback((position) => {
+    snowPositionRef.current = position;
   }, []);
 
   const setCalicoMode = React.useCallback((mode) => {
@@ -1053,15 +1244,15 @@ function App() {
     setCatAction(mode);
   }, []);
 
-  const setTuxedoMode = React.useCallback((mode) => {
+  const setSnowMode = React.useCallback((mode) => {
     if (mode === "walk") {
-      setTuxedoAction("idle");
-      setTuxedoWalking(true);
+      setSnowAction("idle");
+      setSnowWalking(true);
       return;
     }
 
-    setTuxedoWalking(false);
-    setTuxedoAction(mode);
+    setSnowWalking(false);
+    setSnowAction(mode);
   }, []);
 
   const moveCatToTarget = React.useCallback((target) => {
@@ -1082,13 +1273,85 @@ function App() {
     setCalicoMode(nextMode);
   }, [catAction, catWalking, setCalicoMode]);
 
-  const cycleTuxedoMode = React.useCallback(() => {
-    const currentMode = getVisibleCatMode(tuxedoWalking, tuxedoAction);
+  const cycleSnowMode = React.useCallback(() => {
+    const currentMode = getVisibleCatMode(snowWalking, snowAction);
     const currentIndex = CAT_TAP_MODES.indexOf(currentMode);
     const nextMode = CAT_TAP_MODES[(currentIndex + 1) % CAT_TAP_MODES.length];
 
-    setTuxedoMode(nextMode);
-  }, [tuxedoAction, tuxedoWalking, setTuxedoMode]);
+    setSnowMode(nextMode);
+  }, [snowAction, snowWalking, setSnowMode]);
+
+  const completeDuoInteraction = React.useCallback(() => {
+    const interaction = duoInteractionRef.current;
+    if (!interaction) return;
+
+    const calicoPosition = nudgeGardenPoint(interaction.position, -CAT_RESTORE_SPACING, 1);
+    const snowPosition = nudgeGardenPoint(interaction.position, CAT_RESTORE_SPACING, 1);
+
+    calicoPositionRef.current = calicoPosition;
+    snowPositionRef.current = snowPosition;
+    duoCanTriggerRef.current = false;
+    duoCooldownUntilRef.current = performance.now() + CAT_INTERACTION_COOLDOWN_MS;
+    setCatTarget(null);
+    setCatSpawn((spawn) => ({
+      position: calicoPosition,
+      version: spawn.version + 1,
+    }));
+    setSnowSpawn((spawn) => ({
+      position: snowPosition,
+      version: spawn.version + 1,
+    }));
+    setDuoInteraction(null);
+  }, []);
+
+  React.useEffect(() => {
+    if (duoInteraction) return undefined;
+
+    let rafId;
+
+    function tick(now) {
+      const calicoPosition = calicoPositionRef.current;
+      const snowPosition = snowPositionRef.current;
+      const distance = distanceBetweenPoints(calicoPosition, snowPosition);
+
+      if (distance > CAT_COLLISION_REARM_DISTANCE) {
+        duoCanTriggerRef.current = true;
+      }
+
+      const canInterruptActions =
+        !CAT_ONE_SHOT_ACTIONS.has(catAction) && !CAT_ONE_SHOT_ACTIONS.has(snowAction);
+
+      if (
+        duoCanTriggerRef.current &&
+        canInterruptActions &&
+        now >= duoCooldownUntilRef.current &&
+        distance <= CAT_COLLISION_DISTANCE
+      ) {
+        const midpoint = getMidpoint(calicoPosition, snowPosition);
+        const position = isPointOnGarden(midpoint.x, midpoint.y)
+          ? midpoint
+          : clampToGarden(midpoint.x, midpoint.y);
+
+        duoCanTriggerRef.current = false;
+        setCatTarget(null);
+        setDuoInteraction({
+          id: crypto.randomUUID(),
+          position,
+        });
+        return;
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    }
+
+    rafId = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, [catAction, duoInteraction, snowAction]);
 
   function saveFlower(image) {
     setGarden((garden) => ({ ...garden, currentFlower: image }));
@@ -1122,17 +1385,23 @@ function App() {
         flowers={flowers}
         currentFlower={currentFlower}
         plantMode={plantMode}
+        catSpawn={catSpawn}
         catWalking={catWalking}
         catTarget={catTarget}
         catAction={catAction}
-        tuxedoWalking={tuxedoWalking}
-        tuxedoAction={tuxedoAction}
+        snowSpawn={snowSpawn}
+        snowWalking={snowWalking}
+        snowAction={snowAction}
+        duoInteraction={duoInteraction}
         onCatTarget={moveCatToTarget}
         onCatTargetReached={clearCatTarget}
         onCatModeChange={cycleCatMode}
         onCatActionComplete={completeCatAction}
-        onTuxedoModeChange={cycleTuxedoMode}
-        onTuxedoActionComplete={completeTuxedoAction}
+        onCalicoPositionChange={updateCalicoPosition}
+        onSnowModeChange={cycleSnowMode}
+        onSnowActionComplete={completeSnowAction}
+        onSnowPositionChange={updateSnowPosition}
+        onDuoInteractionComplete={completeDuoInteraction}
         onPlant={plantFlower}
       />
 
@@ -1267,15 +1536,32 @@ function App() {
             title="Bomi"
             currentMode={getVisibleCatMode(catWalking, catAction)}
             onSelect={setCalicoMode}
+            disabled={Boolean(duoInteraction)}
           />
           <CatModeControls
-            title="Tuxedo"
-            currentMode={getVisibleCatMode(tuxedoWalking, tuxedoAction)}
-            onSelect={setTuxedoMode}
+            title="Snow"
+            currentMode={getVisibleCatMode(snowWalking, snowAction)}
+            onSelect={setSnowMode}
+            disabled={Boolean(duoInteraction)}
           />
         </section>
 
         <div className="utility-row">
+          <button
+            className="ghost-button"
+            type="button"
+            onClick={toggleBackgroundAudio}
+            aria-pressed={isMusicPlaying}
+            aria-label={isMusicPlaying ? "Turn music off" : "Turn music on"}
+            title={isMusicPlaying ? "Turn music off" : "Turn music on"}
+          >
+            {isMusicPlaying ? (
+              <Volume2 size={17} aria-hidden="true" />
+            ) : (
+              <VolumeX size={17} aria-hidden="true" />
+            )}
+            Music
+          </button>
           <button className="ghost-button" type="button" onClick={() => setShowGallery(true)}>
             <ImageIcon size={17} aria-hidden="true" />
             Gallery
@@ -1299,7 +1585,8 @@ function App() {
           onClose={() => setShowGallery(false)}
         />
       )}
-      <OpeningLetter />
+      <audio ref={backgroundAudioRef} src={BACKGROUND_AUDIO_SRC} preload="auto" loop />
+      <OpeningLetter onEnterGarden={startBackgroundAudio} />
     </main>
   );
 }

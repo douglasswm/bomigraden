@@ -268,6 +268,47 @@ button {
   transform-origin: 50% 50%;
 }
 
+.cat-duo-interaction {
+  --duo-scale-desktop: 0.64;
+  --duo-scale-mobile: 0.55;
+  --duo-scale: var(--duo-scale-desktop);
+  --duo-x: 50%;
+  --duo-y: 60%;
+  --duo-depth: 614;
+  position: absolute;
+  left: var(--duo-x);
+  top: var(--duo-y);
+  width: 512px;
+  height: 512px;
+  pointer-events: none;
+  transform: translate3d(-50%, -96.5%, 0) scale(var(--duo-scale));
+  transform-origin: 50% 96.5%;
+  will-change: transform;
+  z-index: var(--duo-depth);
+}
+
+.cat-duo-frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 512px;
+  height: 512px;
+  object-fit: contain;
+  transform-origin: 50% 96.5%;
+  user-select: none;
+}
+
+.cat-duo-shadow {
+  position: absolute;
+  left: 124px;
+  top: 421px;
+  width: 270px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(35, 55, 31, 0.21);
+  filter: blur(11px);
+}
+
 .tool-panel {
   display: flex;
   flex-direction: column;
@@ -610,6 +651,12 @@ h2 {
   box-shadow:
     0 0 0 2px rgba(220, 95, 67, 0.34),
     0 7px 16px rgba(86, 68, 43, 0.1);
+}
+
+.cat-control-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
 }
 
 .opening-letter-overlay {
@@ -967,6 +1014,10 @@ h2 {
 
   .animated-cat {
     --cat-scale: var(--cat-scale-mobile);
+  }
+
+  .cat-duo-interaction {
+    --duo-scale: var(--duo-scale-mobile);
   }
 
   .brand-row {

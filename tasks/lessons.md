@@ -3,6 +3,8 @@
 - Review this file at session start for project-specific patterns to preserve.
 - When a user asks to clone a specific visual reference, do not substitute a hand-built approximation for a named asset unless exact asset reuse is unavailable or disallowed; inspect and reuse/closely match the reference asset first.
 - For animal characters, verify recognizability at the actual rendered size before calling the work complete.
+- For duo animal sprites, match each animal's apparent size to the individual character components; a two-character 512px frame usually needs a larger component scale than a single-character 512px frame.
+- When a user provides a pet's proper name, update visible labels and internal component/state naming around that character; keep coat-pattern names only where they describe asset folders or sprite variants.
 - For small planted flower templates, exaggerate defining silhouettes like sunflower petals so the species remains recognizable after scaling down.
 - When a user names new assets that are not at the requested destination path, search the repo for the asset pack before asking them to re-add files.
 - For sprite characters, use `steps()` only for frame changes; keep character travel smooth with `requestAnimationFrame`/transform updates instead of coarse `left/top` CSS transitions.

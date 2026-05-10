@@ -1,0 +1,223 @@
+{
+  "pack_name": "Cat Duo Playful Interaction Sprite Pack - Panel Corrected",
+  "source_image": "playful_cat_duo_storyboard_sequence.png",
+  "animation_name": "duo_play",
+  "frame_count": 10,
+  "frame_canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "grid": {
+    "columns": 5,
+    "rows": 2
+  },
+  "packed_sheet": "duo_play_sheet_5x2.png",
+  "origin_hint": {
+    "x": 256,
+    "y": 494,
+    "description": "bottom-center anchor/origin hint"
+  },
+  "correction_note": "Frames were exported from panel-aware crop boundaries rather than equal grid slices to avoid including neighboring fragments or cutting cats.",
+  "frames": [
+    {
+      "file": "frames/duo_play_01.png",
+      "index": 1,
+      "row": 0,
+      "column": 0,
+      "source_panel_bounds": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 423,
+        "y1": 397
+      },
+      "content_width": 402,
+      "content_height": 210,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_02.png",
+      "index": 2,
+      "row": 0,
+      "column": 1,
+      "source_panel_bounds": {
+        "x0": 423,
+        "y0": 0,
+        "x1": 792,
+        "y1": 397
+      },
+      "content_width": 351,
+      "content_height": 266,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_03.png",
+      "index": 3,
+      "row": 0,
+      "column": 2,
+      "source_panel_bounds": {
+        "x0": 792,
+        "y0": 0,
+        "x1": 1176,
+        "y1": 397
+      },
+      "content_width": 346,
+      "content_height": 272,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_04.png",
+      "index": 4,
+      "row": 0,
+      "column": 3,
+      "source_panel_bounds": {
+        "x0": 1176,
+        "y0": 0,
+        "x1": 1566,
+        "y1": 397
+      },
+      "content_width": 381,
+      "content_height": 232,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_05.png",
+      "index": 5,
+      "row": 0,
+      "column": 4,
+      "source_panel_bounds": {
+        "x0": 1566,
+        "y0": 0,
+        "x1": 1983,
+        "y1": 397
+      },
+      "content_width": 396,
+      "content_height": 214,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_06.png",
+      "index": 6,
+      "row": 1,
+      "column": 0,
+      "source_panel_bounds": {
+        "x0": 0,
+        "y0": 397,
+        "x1": 423,
+        "y1": 793
+      },
+      "content_width": 395,
+      "content_height": 213,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_07.png",
+      "index": 7,
+      "row": 1,
+      "column": 1,
+      "source_panel_bounds": {
+        "x0": 423,
+        "y0": 397,
+        "x1": 792,
+        "y1": 793
+      },
+      "content_width": 351,
+      "content_height": 208,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_08.png",
+      "index": 8,
+      "row": 1,
+      "column": 2,
+      "source_panel_bounds": {
+        "x0": 792,
+        "y0": 397,
+        "x1": 1176,
+        "y1": 793
+      },
+      "content_width": 372,
+      "content_height": 255,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_09.png",
+      "index": 9,
+      "row": 1,
+      "column": 3,
+      "source_panel_bounds": {
+        "x0": 1176,
+        "y0": 397,
+        "x1": 1566,
+        "y1": 793
+      },
+      "content_width": 376,
+      "content_height": 250,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    },
+    {
+      "file": "frames/duo_play_10.png",
+      "index": 10,
+      "row": 1,
+      "column": 4,
+      "source_panel_bounds": {
+        "x0": 1566,
+        "y0": 397,
+        "x1": 1983,
+        "y1": 793
+      },
+      "content_width": 337,
+      "content_height": 252,
+      "anchor": {
+        "x": 256,
+        "y": 494
+      },
+      "canvas_width": 512,
+      "canvas_height": 512
+    }
+  ]
+}
