@@ -1,0 +1,401 @@
+{
+  "frame_canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "actions": {
+    "sleeping": {
+      "source_sheet": "cute_calico_kitten_nap_sequence.png",
+      "frame_count": 10,
+      "sheet": "sleeping_sheet_5x2.png",
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "frames": [
+        {
+          "file": "sleeping/sleeping_01.png",
+          "index": 1,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 329,
+          "content_height": 187,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_02.png",
+          "index": 2,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 312,
+          "content_height": 186,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_03.png",
+          "index": 3,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 316,
+          "content_height": 184,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_04.png",
+          "index": 4,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 316,
+          "content_height": 183,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_05.png",
+          "index": 5,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 310,
+          "content_height": 177,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_06.png",
+          "index": 6,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 315,
+          "content_height": 181,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_07.png",
+          "index": 7,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 299,
+          "content_height": 178,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_08.png",
+          "index": 8,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 307,
+          "content_height": 178,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_09.png",
+          "index": 9,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 312,
+          "content_height": 174,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_10.png",
+          "index": 10,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 317,
+          "content_height": 177,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    },
+    "jumping": {
+      "source_sheet": "calico_kitten_jumping_and_running_sequence.png",
+      "frame_count": 10,
+      "sheet": "jumping_sheet_5x2.png",
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "frames": [
+        {
+          "file": "jumping/jumping_01.png",
+          "index": 1,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 257,
+          "content_height": 200,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_02.png",
+          "index": 2,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 264,
+          "content_height": 206,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_03.png",
+          "index": 3,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 305,
+          "content_height": 228,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_04.png",
+          "index": 4,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 326,
+          "content_height": 202,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_05.png",
+          "index": 5,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 353,
+          "content_height": 141,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_06.png",
+          "index": 6,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 303,
+          "content_height": 205,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_07.png",
+          "index": 7,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 307,
+          "content_height": 215,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_08.png",
+          "index": 8,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 254,
+          "content_height": 205,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_09.png",
+          "index": 9,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 276,
+          "content_height": 196,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_10.png",
+          "index": 10,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 282,
+          "content_height": 224,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    },
+    "rolling_over": {
+      "source_sheet": "calico_cat_rolling_sequence_in_watercolor.png",
+      "frame_count": 10,
+      "sheet": "rolling_over_sheet_5x2.png",
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "frames": [
+        {
+          "file": "rolling_over/rolling_over_01.png",
+          "index": 1,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 337,
+          "content_height": 162,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_02.png",
+          "index": 2,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 350,
+          "content_height": 168,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_03.png",
+          "index": 3,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 317,
+          "content_height": 185,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_04.png",
+          "index": 4,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 321,
+          "content_height": 206,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_05.png",
+          "index": 5,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 328,
+          "content_height": 171,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_06.png",
+          "index": 6,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 326,
+          "content_height": 162,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_07.png",
+          "index": 7,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 306,
+          "content_height": 156,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_08.png",
+          "index": 8,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 305,
+          "content_height": 157,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_09.png",
+          "index": 9,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 304,
+          "content_height": 158,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_10.png",
+          "index": 10,
+          "canvas_width": 512,
+          "canvas_height": 512,
+          "content_width": 294,
+          "content_height": 159,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    }
+  }
+}

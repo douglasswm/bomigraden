@@ -1,0 +1,244 @@
+{
+  "pack_name": "Calico Cat Idle + Walk Smooth Sprite Pack",
+  "frame_canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "origin_hint": {
+    "x": 256,
+    "y": 494,
+    "description": "bottom-center anchor/origin hint"
+  },
+  "actions": {
+    "idle": {
+      "source_image": "playful_calico_cat_animation_poses.png",
+      "frame_count": 10,
+      "frame_size": {
+        "width": 512,
+        "height": 512
+      },
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "packed_sheet": "idle_sheet_5x2.png",
+      "frames": [
+        {
+          "file": "idle/idle_01.png",
+          "index": 1,
+          "content_width": 252,
+          "content_height": 328,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_02.png",
+          "index": 2,
+          "content_width": 254,
+          "content_height": 328,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_03.png",
+          "index": 3,
+          "content_width": 249,
+          "content_height": 321,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_04.png",
+          "index": 4,
+          "content_width": 278,
+          "content_height": 328,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_05.png",
+          "index": 5,
+          "content_width": 233,
+          "content_height": 323,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_06.png",
+          "index": 6,
+          "content_width": 230,
+          "content_height": 318,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_07.png",
+          "index": 7,
+          "content_width": 238,
+          "content_height": 312,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_08.png",
+          "index": 8,
+          "content_width": 233,
+          "content_height": 319,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_09.png",
+          "index": 9,
+          "content_width": 241,
+          "content_height": 316,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_10.png",
+          "index": 10,
+          "content_width": 233,
+          "content_height": 320,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    },
+    "walk": {
+      "source_image": "cute_calico_cat_walk_cycle.png",
+      "frame_count": 10,
+      "frame_size": {
+        "width": 512,
+        "height": 512
+      },
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "packed_sheet": "walk_sheet_5x2.png",
+      "frames": [
+        {
+          "file": "walk/walk_01.png",
+          "index": 1,
+          "content_width": 314,
+          "content_height": 261,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_02.png",
+          "index": 2,
+          "content_width": 317,
+          "content_height": 262,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_03.png",
+          "index": 3,
+          "content_width": 330,
+          "content_height": 253,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_04.png",
+          "index": 4,
+          "content_width": 312,
+          "content_height": 260,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_05.png",
+          "index": 5,
+          "content_width": 329,
+          "content_height": 261,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_06.png",
+          "index": 6,
+          "content_width": 324,
+          "content_height": 259,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_07.png",
+          "index": 7,
+          "content_width": 320,
+          "content_height": 253,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_08.png",
+          "index": 8,
+          "content_width": 325,
+          "content_height": 249,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_09.png",
+          "index": 9,
+          "content_width": 327,
+          "content_height": 256,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_10.png",
+          "index": 10,
+          "content_width": 308,
+          "content_height": 249,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    }
+  }
+}
