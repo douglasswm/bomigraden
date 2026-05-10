@@ -1,0 +1,589 @@
+{
+  "pack_name": "Tuxedo Cat Smooth Sprite Pack",
+  "frame_canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "origin_hint": {
+    "x": 256,
+    "y": 494,
+    "description": "bottom-center anchor/origin hint"
+  },
+  "actions": {
+    "idle": {
+      "source_image": "tuxedo_cat_sprite_sheet_poses.png",
+      "frame_count": 10,
+      "frame_size": {
+        "width": 512,
+        "height": 512
+      },
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "packed_sheet": "idle_sheet_5x2.png",
+      "frames": [
+        {
+          "file": "idle/idle_01.png",
+          "index": 1,
+          "content_width": 228,
+          "content_height": 355,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_02.png",
+          "index": 2,
+          "content_width": 246,
+          "content_height": 352,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_03.png",
+          "index": 3,
+          "content_width": 239,
+          "content_height": 354,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_04.png",
+          "index": 4,
+          "content_width": 239,
+          "content_height": 363,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_05.png",
+          "index": 5,
+          "content_width": 231,
+          "content_height": 362,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_06.png",
+          "index": 6,
+          "content_width": 234,
+          "content_height": 353,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_07.png",
+          "index": 7,
+          "content_width": 233,
+          "content_height": 356,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_08.png",
+          "index": 8,
+          "content_width": 237,
+          "content_height": 355,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_09.png",
+          "index": 9,
+          "content_width": 238,
+          "content_height": 353,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "idle/idle_10.png",
+          "index": 10,
+          "content_width": 261,
+          "content_height": 353,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    },
+    "walk": {
+      "source_image": "tuxedo_cat_walking_animation_sequence.png",
+      "frame_count": 10,
+      "frame_size": {
+        "width": 512,
+        "height": 512
+      },
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "packed_sheet": "walk_sheet_5x2.png",
+      "frames": [
+        {
+          "file": "walk/walk_01.png",
+          "index": 1,
+          "content_width": 378,
+          "content_height": 258,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_02.png",
+          "index": 2,
+          "content_width": 368,
+          "content_height": 258,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_03.png",
+          "index": 3,
+          "content_width": 368,
+          "content_height": 258,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_04.png",
+          "index": 4,
+          "content_width": 350,
+          "content_height": 258,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_05.png",
+          "index": 5,
+          "content_width": 367,
+          "content_height": 258,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_06.png",
+          "index": 6,
+          "content_width": 373,
+          "content_height": 261,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_07.png",
+          "index": 7,
+          "content_width": 347,
+          "content_height": 262,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_08.png",
+          "index": 8,
+          "content_width": 369,
+          "content_height": 261,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_09.png",
+          "index": 9,
+          "content_width": 354,
+          "content_height": 261,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "walk/walk_10.png",
+          "index": 10,
+          "content_width": 367,
+          "content_height": 261,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    },
+    "sleeping": {
+      "source_image": "sleepy_cat_sprite_sheet_series.png",
+      "frame_count": 10,
+      "frame_size": {
+        "width": 512,
+        "height": 512
+      },
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "packed_sheet": "sleeping_sheet_5x2.png",
+      "frames": [
+        {
+          "file": "sleeping/sleeping_01.png",
+          "index": 1,
+          "content_width": 285,
+          "content_height": 279,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_02.png",
+          "index": 2,
+          "content_width": 300,
+          "content_height": 232,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_03.png",
+          "index": 3,
+          "content_width": 309,
+          "content_height": 201,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_04.png",
+          "index": 4,
+          "content_width": 311,
+          "content_height": 192,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_05.png",
+          "index": 5,
+          "content_width": 311,
+          "content_height": 188,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_06.png",
+          "index": 6,
+          "content_width": 308,
+          "content_height": 187,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_07.png",
+          "index": 7,
+          "content_width": 307,
+          "content_height": 196,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_08.png",
+          "index": 8,
+          "content_width": 331,
+          "content_height": 188,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_09.png",
+          "index": 9,
+          "content_width": 302,
+          "content_height": 199,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "sleeping/sleeping_10.png",
+          "index": 10,
+          "content_width": 289,
+          "content_height": 244,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    },
+    "jumping": {
+      "source_image": "tuxedo_cat_jump_animation_sequence.png",
+      "frame_count": 10,
+      "frame_size": {
+        "width": 512,
+        "height": 512
+      },
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "packed_sheet": "jumping_sheet_5x2.png",
+      "frames": [
+        {
+          "file": "jumping/jumping_01.png",
+          "index": 1,
+          "content_width": 306,
+          "content_height": 204,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_02.png",
+          "index": 2,
+          "content_width": 320,
+          "content_height": 172,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_03.png",
+          "index": 3,
+          "content_width": 350,
+          "content_height": 235,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_04.png",
+          "index": 4,
+          "content_width": 299,
+          "content_height": 264,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_05.png",
+          "index": 5,
+          "content_width": 365,
+          "content_height": 256,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_06.png",
+          "index": 6,
+          "content_width": 353,
+          "content_height": 201,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_07.png",
+          "index": 7,
+          "content_width": 284,
+          "content_height": 271,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_08.png",
+          "index": 8,
+          "content_width": 263,
+          "content_height": 215,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_09.png",
+          "index": 9,
+          "content_width": 280,
+          "content_height": 178,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "jumping/jumping_10.png",
+          "index": 10,
+          "content_width": 259,
+          "content_height": 260,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    },
+    "rolling_over": {
+      "source_image": "playful_tuxedo_cat_animation_sequence.png",
+      "frame_count": 10,
+      "frame_size": {
+        "width": 512,
+        "height": 512
+      },
+      "grid": {
+        "columns": 5,
+        "rows": 2
+      },
+      "packed_sheet": "rolling_over_sheet_5x2.png",
+      "frames": [
+        {
+          "file": "rolling_over/rolling_over_01.png",
+          "index": 1,
+          "content_width": 376,
+          "content_height": 223,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_02.png",
+          "index": 2,
+          "content_width": 348,
+          "content_height": 224,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_03.png",
+          "index": 3,
+          "content_width": 341,
+          "content_height": 223,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_04.png",
+          "index": 4,
+          "content_width": 357,
+          "content_height": 200,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_05.png",
+          "index": 5,
+          "content_width": 347,
+          "content_height": 207,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_06.png",
+          "index": 6,
+          "content_width": 343,
+          "content_height": 236,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_07.png",
+          "index": 7,
+          "content_width": 362,
+          "content_height": 208,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_08.png",
+          "index": 8,
+          "content_width": 321,
+          "content_height": 246,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_09.png",
+          "index": 9,
+          "content_width": 338,
+          "content_height": 237,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        },
+        {
+          "file": "rolling_over/rolling_over_10.png",
+          "index": 10,
+          "content_width": 366,
+          "content_height": 218,
+          "anchor": {
+            "x": 256,
+            "y": 494
+          }
+        }
+      ]
+    }
+  }
+}

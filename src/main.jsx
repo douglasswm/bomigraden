@@ -19,9 +19,15 @@ const STORAGE_KEY = "bomigarden-state";
 const CAT_WALK_DURATION = 6200;
 const CAT_REST_DURATION = 2200;
 const CAT_JUMP_DURATION = 2400;
-const CAT_JUMP_REST_DURATION = 180;
 const CAT_TICK_MS = 1000 / 60;
 const CAT_TAP_MODES = ["idle", "walk", "sleeping", "jumping", "rolling_over"];
+const CAT_CONTROL_OPTIONS = [
+  { action: "idle", label: "Idle" },
+  { action: "walk", label: "Walk" },
+  { action: "sleeping", label: "Sleep" },
+  { action: "jumping", label: "Jump" },
+  { action: "rolling_over", label: "Roll Over" },
+];
 const CAT_WAYPOINTS = [
   { x: 23, y: 33 },
   { x: 41, y: 27 },
@@ -32,60 +38,78 @@ const CAT_WAYPOINTS = [
   { x: 25, y: 72 },
   { x: 34, y: 56 },
 ];
-const CAT_BASE_ANIMATIONS = {
-  idle: {
-    frameDurationMs: 220,
-    frames: Array.from(
-      { length: 10 },
-      (_, index) =>
-        `/assets/cat/idle-walk-smooth/idle/idle_${String(index + 1).padStart(2, "0")}.png`
-    ),
-  },
-  walk: {
-    frameDurationMs: 125,
-    frames: Array.from(
-      { length: 10 },
-      (_, index) =>
-        `/assets/cat/idle-walk-smooth/walk/walk_${String(index + 1).padStart(2, "0")}.png`
-    ),
-  },
-};
-const CAT_ACTIONS = {
-  sleeping: {
-    label: "sleeping",
-    frameDurationMs: 260,
-    loop: true,
-    frames: Array.from(
-      { length: 10 },
-      (_, index) =>
-        `/assets/cat/smooth/sleeping/sleeping_${String(index + 1).padStart(2, "0")}.png`
-    ),
-  },
-  jumping: {
-    label: "jumping",
-    frameDurationMs: 210,
-    loop: true,
-    frames: Array.from(
-      { length: 10 },
-      (_, index) =>
-        `/assets/cat/smooth/jumping/jumping_${String(index + 1).padStart(2, "0")}.png`
-    ),
-  },
-  rolling_over: {
-    label: "rolling over",
-    frameDurationMs: 260,
-    loop: true,
-    frames: Array.from(
-      { length: 10 },
-      (_, index) =>
-        `/assets/cat/smooth/rolling_over/rolling_over_${String(index + 1).padStart(2, "0")}.png`
-    ),
-  },
-};
-const PRELOAD_CAT_FRAMES = [
-  ...Object.values(CAT_BASE_ANIMATIONS).flatMap((action) => action.frames),
-  ...Object.values(CAT_ACTIONS).flatMap((action) => action.frames),
+const TUXEDO_WAYPOINTS = [
+  { x: 67, y: 58 },
+  { x: 77, y: 49 },
+  { x: 69, y: 38 },
+  { x: 53, y: 43 },
+  { x: 51, y: 59 },
+  { x: 63, y: 73 },
+  { x: 78, y: 69 },
 ];
+const CAT_FRAME_DURATIONS = {
+  idle: 220,
+  walk: 125,
+  sleeping: 260,
+  jumping: 240,
+  rolling_over: 260,
+};
+const CAT_ACTION_LABELS = {
+  idle: "idle",
+  walk: "walk",
+  sleeping: "sleeping",
+  jumping: "jumping",
+  rolling_over: "rolling over",
+};
+const CAT_LOOPING_ACTIONS = new Set(["idle", "walk", "sleeping"]);
+
+function createCatFrames(basePath, action) {
+  return Array.from(
+    { length: 10 },
+    (_, index) => `${basePath}/${action}/${action}_${String(index + 1).padStart(2, "0")}.png`
+  );
+}
+
+function createCatAction(basePath, action) {
+  return {
+    label: CAT_ACTION_LABELS[action],
+    frameDurationMs: CAT_FRAME_DURATIONS[action],
+    loop: CAT_LOOPING_ACTIONS.has(action),
+    frames: createCatFrames(basePath, action),
+  };
+}
+
+const catSpritePacks = {
+  calico: {
+    label: "Calico",
+    scale: 0.42,
+    actions: {
+      idle: {
+        ...createCatAction("/assets/cat/idle-walk-smooth", "idle"),
+      },
+      walk: {
+        ...createCatAction("/assets/cat/idle-walk-smooth", "walk"),
+      },
+      sleeping: {
+        ...createCatAction("/assets/cat/smooth", "sleeping"),
+      },
+      jumping: {
+        ...createCatAction("/assets/cat/smooth", "jumping"),
+      },
+      rolling_over: {
+        ...createCatAction("/assets/cat/smooth", "rolling_over"),
+      },
+    },
+  },
+  tuxedo: {
+    label: "Tuxedo",
+    scale: 0.4,
+    actions: Object.fromEntries(
+      CAT_TAP_MODES.map((action) => [action, createCatAction("/assets/cat/tuxedo", action)])
+    ),
+  },
+};
+const CAT_BASE_ACTIONS = new Set(["idle", "walk"]);
 
 function lerp(start, end, amount) {
   return start + (end - start) * amount;
@@ -426,10 +450,21 @@ function usePreloadImages(sources) {
   }, [sources]);
 }
 
-function AnimatedCat({ autoWalk, target, requestedAction, onModeChange, onActionComplete, onTargetReached }) {
+function AnimatedCat({
+  spritePack,
+  waypoints = CAT_WAYPOINTS,
+  initialPosition = waypoints[0],
+  autoWalk,
+  target,
+  requestedAction,
+  onModeChange,
+  onActionComplete,
+  onTargetReached,
+  className = "",
+}) {
   const catRef = React.useRef(null);
   const waypointRef = React.useRef(0);
-  const positionRef = React.useRef(CAT_WAYPOINTS[0]);
+  const positionRef = React.useRef(initialPosition);
   const rafRef = React.useRef(null);
   const restTimerRef = React.useRef(null);
   const lastTickRef = React.useRef(0);
@@ -438,20 +473,27 @@ function AnimatedCat({ autoWalk, target, requestedAction, onModeChange, onAction
   const baseFrameRafRef = React.useRef(null);
   const baseFrameStartedAtRef = React.useRef(0);
   const actionCompletedRef = React.useRef(false);
-  const activeAction = CAT_ACTIONS[requestedAction] || null;
+  const activeAction = CAT_BASE_ACTIONS.has(requestedAction)
+    ? null
+    : spritePack.actions[requestedAction] || null;
   const [frameIndex, setFrameIndex] = React.useState(0);
   const [baseFrameIndex, setBaseFrameIndex] = React.useState(0);
   const [catState, setCatState] = React.useState({
     isMoving: false,
     direction: 1,
   });
+  const spriteFrameSources = React.useMemo(
+    () => Object.values(spritePack.actions).flatMap((action) => action.frames),
+    [spritePack]
+  );
 
-  usePreloadImages(PRELOAD_CAT_FRAMES);
+  usePreloadImages(spriteFrameSources);
 
   function syncCatPosition(position) {
     if (!catRef.current) return;
     catRef.current.style.setProperty("--cat-x", `${position.x}%`);
     catRef.current.style.setProperty("--cat-y", `${position.y}%`);
+    catRef.current.style.setProperty("--cat-depth", Math.round(position.y * 10));
   }
 
   function syncCatJumpVisual(progress = 0) {
@@ -585,8 +627,8 @@ function AnimatedCat({ autoWalk, target, requestedAction, onModeChange, onAction
 
     function startWalk() {
       const current = positionRef.current;
-      const nextIndex = (waypointRef.current + 1) % CAT_WAYPOINTS.length;
-      const next = CAT_WAYPOINTS[nextIndex];
+      const nextIndex = (waypointRef.current + 1) % waypoints.length;
+      const next = waypoints[nextIndex];
 
       waypointRef.current = nextIndex;
       walkTo(next, () => {
@@ -611,13 +653,11 @@ function AnimatedCat({ autoWalk, target, requestedAction, onModeChange, onAction
     }
 
     function startJump() {
-      const nextIndex = (waypointRef.current + 1) % CAT_WAYPOINTS.length;
-      const next = CAT_WAYPOINTS[nextIndex];
+      const nextIndex = (waypointRef.current + 1) % waypoints.length;
+      const next = waypoints[nextIndex];
 
       waypointRef.current = nextIndex;
-      jumpTo(next, () => {
-        restTimerRef.current = window.setTimeout(startJump, CAT_JUMP_REST_DURATION);
-      });
+      jumpTo(next);
     }
 
     restTimerRef.current = window.setTimeout(startJump, 120);
@@ -626,7 +666,7 @@ function AnimatedCat({ autoWalk, target, requestedAction, onModeChange, onAction
       clearCatTimers();
       syncCatJumpVisual(0);
     };
-  }, [activeAction, requestedAction]);
+  }, [activeAction, requestedAction, waypoints]);
 
   React.useEffect(() => {
     if (!target) return;
@@ -677,7 +717,7 @@ function AnimatedCat({ autoWalk, target, requestedAction, onModeChange, onAction
 
   const baseState = catState.isMoving ? "walk" : "idle";
   const currentCatState = activeAction ? requestedAction : baseState;
-  const baseAnimation = CAT_BASE_ANIMATIONS[baseState];
+  const baseAnimation = spritePack.actions[baseState];
   const baseFrame = baseAnimation.frames[baseFrameIndex % baseAnimation.frames.length];
   const smoothFrame = activeAction?.frames[frameIndex] || baseFrame;
 
@@ -705,21 +745,48 @@ function AnimatedCat({ autoWalk, target, requestedAction, onModeChange, onAction
   return (
     <div
       ref={catRef}
-      className={`animated-cat cat-state-${currentCatState} ${catState.isMoving ? "is-walking" : "is-idle"}`}
-      aria-label={`Tap cat to change mode. Current mode: ${currentCatState.replace("_", " ")}`}
+      className={`animated-cat ${className} cat-state-${currentCatState} ${catState.isMoving ? "is-walking" : "is-idle"}`}
+      aria-label={`Tap ${spritePack.label.toLowerCase()} cat to change mode. Current mode: ${currentCatState.replace("_", " ")}`}
       role="button"
       tabIndex={0}
       onClick={handleCatClick}
       onKeyDown={handleCatKeyDown}
       style={{
-        "--cat-x": `${CAT_WAYPOINTS[0].x}%`,
-        "--cat-y": `${CAT_WAYPOINTS[0].y}%`,
+        "--cat-x": `${initialPosition.x}%`,
+        "--cat-y": `${initialPosition.y}%`,
         "--cat-direction": catState.direction,
+        "--cat-scale-desktop": spritePack.scale,
+        "--cat-scale-mobile": Number((spritePack.scale * 0.86).toFixed(3)),
+        "--cat-depth": Math.round(initialPosition.y * 10),
       }}
     >
       <div className="cat-ground-shadow" />
       <img className="cat-frame" src={smoothFrame} alt="" draggable="false" />
     </div>
+  );
+}
+
+function CalicoCat(props) {
+  return (
+    <AnimatedCat
+      {...props}
+      className="calico-cat"
+      spritePack={catSpritePacks.calico}
+      waypoints={CAT_WAYPOINTS}
+      initialPosition={CAT_WAYPOINTS[0]}
+    />
+  );
+}
+
+function TuxedoCat(props) {
+  return (
+    <AnimatedCat
+      {...props}
+      className="tuxedo-cat"
+      spritePack={catSpritePacks.tuxedo}
+      waypoints={TUXEDO_WAYPOINTS}
+      initialPosition={TUXEDO_WAYPOINTS[0]}
+    />
   );
 }
 
@@ -730,10 +797,14 @@ function GardenScene({
   catWalking,
   catTarget,
   catAction,
+  tuxedoWalking,
+  tuxedoAction,
   onCatTarget,
   onCatTargetReached,
   onCatModeChange,
   onCatActionComplete,
+  onTuxedoModeChange,
+  onTuxedoActionComplete,
   onPlant,
 }) {
   function handleGardenClick(event) {
@@ -783,13 +854,19 @@ function GardenScene({
             }}
           />
         ))}
-        <AnimatedCat
+        <CalicoCat
           autoWalk={catWalking}
           target={catTarget}
           requestedAction={catAction}
           onModeChange={onCatModeChange}
           onTargetReached={onCatTargetReached}
           onActionComplete={onCatActionComplete}
+        />
+        <TuxedoCat
+          autoWalk={tuxedoWalking}
+          requestedAction={tuxedoAction}
+          onModeChange={onTuxedoModeChange}
+          onActionComplete={onTuxedoActionComplete}
         />
         {plantMode && (
           <img
@@ -867,6 +944,30 @@ function TemplatePicker({ selectedFlower, onSelect }) {
   );
 }
 
+function getVisibleCatMode(isWalking, action) {
+  return isWalking ? "walk" : action;
+}
+
+function CatModeControls({ title, currentMode, onSelect }) {
+  return (
+    <div className="cat-control-group">
+      <h3>{title}</h3>
+      <div className="cat-control-grid" role="group" aria-label={`${title} animation controls`}>
+        {CAT_CONTROL_OPTIONS.map((option) => (
+          <button
+            key={option.action}
+            className={currentMode === option.action ? "cat-control-button active" : "cat-control-button"}
+            type="button"
+            onClick={() => onSelect(option.action)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function OpeningLetter() {
   const [isVisible, setIsVisible] = React.useState(true);
 
@@ -925,12 +1026,42 @@ function App() {
   const [catWalking, setCatWalking] = React.useState(false);
   const [catTarget, setCatTarget] = React.useState(null);
   const [catAction, setCatAction] = React.useState("idle");
+  const [tuxedoWalking, setTuxedoWalking] = React.useState(false);
+  const [tuxedoAction, setTuxedoAction] = React.useState("idle");
   const [showGallery, setShowGallery] = React.useState(false);
   const [undoSignal, setUndoSignal] = React.useState(0);
   const [clearSignal, setClearSignal] = React.useState(0);
 
   const completeCatAction = React.useCallback(() => {
     setCatAction("idle");
+  }, []);
+
+  const completeTuxedoAction = React.useCallback(() => {
+    setTuxedoAction("idle");
+  }, []);
+
+  const setCalicoMode = React.useCallback((mode) => {
+    setCatTarget(null);
+
+    if (mode === "walk") {
+      setCatAction("idle");
+      setCatWalking(true);
+      return;
+    }
+
+    setCatWalking(false);
+    setCatAction(mode);
+  }, []);
+
+  const setTuxedoMode = React.useCallback((mode) => {
+    if (mode === "walk") {
+      setTuxedoAction("idle");
+      setTuxedoWalking(true);
+      return;
+    }
+
+    setTuxedoWalking(false);
+    setTuxedoAction(mode);
   }, []);
 
   const moveCatToTarget = React.useCallback((target) => {
@@ -948,17 +1079,16 @@ function App() {
     const currentIndex = CAT_TAP_MODES.indexOf(currentMode);
     const nextMode = CAT_TAP_MODES[(currentIndex + 1) % CAT_TAP_MODES.length];
 
-    setCatTarget(null);
+    setCalicoMode(nextMode);
+  }, [catAction, catWalking, setCalicoMode]);
 
-    if (nextMode === "walk") {
-      setCatAction("idle");
-      setCatWalking(true);
-      return;
-    }
+  const cycleTuxedoMode = React.useCallback(() => {
+    const currentMode = getVisibleCatMode(tuxedoWalking, tuxedoAction);
+    const currentIndex = CAT_TAP_MODES.indexOf(currentMode);
+    const nextMode = CAT_TAP_MODES[(currentIndex + 1) % CAT_TAP_MODES.length];
 
-    setCatWalking(false);
-    setCatAction(nextMode);
-  }, [catAction, catWalking]);
+    setTuxedoMode(nextMode);
+  }, [tuxedoAction, tuxedoWalking, setTuxedoMode]);
 
   function saveFlower(image) {
     setGarden((garden) => ({ ...garden, currentFlower: image }));
@@ -995,10 +1125,14 @@ function App() {
         catWalking={catWalking}
         catTarget={catTarget}
         catAction={catAction}
+        tuxedoWalking={tuxedoWalking}
+        tuxedoAction={tuxedoAction}
         onCatTarget={moveCatToTarget}
         onCatTargetReached={clearCatTarget}
         onCatModeChange={cycleCatMode}
         onCatActionComplete={completeCatAction}
+        onTuxedoModeChange={cycleTuxedoMode}
+        onTuxedoActionComplete={completeTuxedoAction}
         onPlant={plantFlower}
       />
 
@@ -1124,6 +1258,22 @@ function App() {
         )}
 
         <TemplatePicker selectedFlower={currentFlower} onSelect={selectTemplate} />
+
+        <section className="cat-controls" aria-labelledby="cat-controls-title">
+          <div className="section-heading">
+            <h2 id="cat-controls-title">Cats</h2>
+          </div>
+          <CatModeControls
+            title="Bomi"
+            currentMode={getVisibleCatMode(catWalking, catAction)}
+            onSelect={setCalicoMode}
+          />
+          <CatModeControls
+            title="Tuxedo"
+            currentMode={getVisibleCatMode(tuxedoWalking, tuxedoAction)}
+            onSelect={setTuxedoMode}
+          />
+        </section>
 
         <div className="utility-row">
           <button className="ghost-button" type="button" onClick={() => setShowGallery(true)}>

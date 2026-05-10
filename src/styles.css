@@ -209,10 +209,13 @@ button {
 }
 
 .animated-cat {
-  --cat-scale: 0.42;
+  --cat-scale-desktop: 0.42;
+  --cat-scale-mobile: 0.36;
+  --cat-scale: var(--cat-scale-desktop);
   --cat-direction: 1;
   --cat-x: 34%;
   --cat-y: 63%;
+  --cat-depth: 640;
   --cat-hop-y: 0px;
   --cat-shadow-hop-y: 0px;
   --cat-shadow-opacity: 1;
@@ -228,7 +231,7 @@ button {
   transform: translate3d(-50%, calc(-96.5% + var(--cat-hop-y)), 0) scale(var(--cat-scale)) scaleX(var(--cat-direction));
   transform-origin: 50% 96.5%;
   will-change: left, top, transform;
-  z-index: 640;
+  z-index: var(--cat-depth);
 }
 
 .animated-cat:focus-visible {
@@ -391,6 +394,7 @@ h2 {
 .primary-action:hover,
 .ghost-button:hover,
 .icon-button:hover,
+.cat-control-button:hover,
 .template-button:hover,
 .gallery-flower:hover {
   transform: translateY(-1px);
@@ -557,6 +561,55 @@ h2 {
   color: #375a47;
   background: rgba(202, 225, 196, 0.58);
   font-weight: 750;
+}
+
+.cat-controls {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cat-control-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.cat-control-group h3 {
+  margin: 0;
+  color: #425443;
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
+.cat-control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.cat-control-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 2.35rem;
+  padding: 0 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.56);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.cat-control-button.active {
+  background: #ffffff;
+  box-shadow:
+    0 0 0 2px rgba(220, 95, 67, 0.34),
+    0 7px 16px rgba(86, 68, 43, 0.1);
 }
 
 .opening-letter-overlay {
@@ -913,7 +966,7 @@ h2 {
   }
 
   .animated-cat {
-    --cat-scale: 0.36;
+    --cat-scale: var(--cat-scale-mobile);
   }
 
   .brand-row {
