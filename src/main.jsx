@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import {
+  ArrowDownToLine,
   Brush,
   Cat,
   Check,
@@ -9,6 +10,7 @@ import {
   Image as ImageIcon,
   MousePointer2,
   RotateCcw,
+  SendHorizontal,
   Trash2,
   Undo2,
   Volume2,
@@ -25,6 +27,10 @@ const CAT_JUMP_DURATION = 2400;
 const CAT_TICK_MS = 1000 / 60;
 const CAT_COLLISION_DISTANCE = 12.5;
 const CAT_COLLISION_REARM_DISTANCE = 16;
+const TOY_CATCH_DISTANCE = 8.5;
+const TOY_ACTION_FRAME_COUNT = 5;
+const TOY_DROP_DURATION_MS = 560;
+const TOY_THROW_DURATION_MS = 680;
 const CAT_INTERACTION_COOLDOWN_MS = 3000;
 const CAT_RESTORE_SPACING = 7.2;
 const CAT_TAP_MODES = ["idle", "walk", "sleeping", "jumping", "rolling_over"];
@@ -35,6 +41,10 @@ const CAT_CONTROL_OPTIONS = [
   { action: "jumping", label: "Jump" },
   { action: "rolling_over", label: "Roll Over" },
 ];
+const CAT_IDS = {
+  calico: "calico",
+  snow: "snow",
+};
 const CAT_WAYPOINTS = [
   { x: 23, y: 33 },
   { x: 41, y: 27 },
@@ -60,6 +70,7 @@ const CAT_FRAME_DURATIONS = {
   sleeping: 260,
   jumping: 240,
   rolling_over: 260,
+  rolling_over_with_toy: 380,
 };
 const CAT_ACTION_LABELS = {
   idle: "idle",
@@ -67,20 +78,79 @@ const CAT_ACTION_LABELS = {
   sleeping: "sleeping",
   jumping: "jumping",
   rolling_over: "rolling over",
+  rolling_over_with_toy: "rolling over with toy",
 };
 const CAT_LOOPING_ACTIONS = new Set(["idle", "walk", "sleeping"]);
-const CAT_ONE_SHOT_ACTIONS = new Set(["jumping", "rolling_over"]);
+const CAT_ONE_SHOT_ACTIONS = new Set(["jumping", "rolling_over", "rolling_over_with_toy"]);
 const DUO_INTERACTION_FRAME_DURATION = 280;
 const DUO_INTERACTION_FRAMES = Array.from(
   { length: 10 },
   (_, index) =>
     `/assets/cat/duo-interaction/frames/duo_play_${String(index + 1).padStart(2, "0")}.png`
 );
+const TOY_PLAY_DURATION_MS = 9600;
+const CAT_TOY_ASSET_VERSION = "toyfix-3";
+function versionCatToyAsset(src) {
+  return `${src}?v=${CAT_TOY_ASSET_VERSION}`;
+}
+const CAT_ASSET_VERSION = "catfix-4";
+function versionCatAsset(src) {
+  return `${src}?v=${CAT_ASSET_VERSION}`;
+}
+const toyAssets = {
+  chili: {
+    label: "Chili",
+    static: versionCatToyAsset("/assets/cat-toys/toys/chili_static.png"),
+    drop: {
+      frameDurationMs: Math.round(TOY_DROP_DURATION_MS / TOY_ACTION_FRAME_COUNT),
+      durationMs: TOY_DROP_DURATION_MS,
+      frames: createToyFrames("chili", "drop"),
+    },
+    throw: {
+      frameDurationMs: Math.round(TOY_THROW_DURATION_MS / TOY_ACTION_FRAME_COUNT),
+      durationMs: TOY_THROW_DURATION_MS,
+      frames: createToyFrames("chili", "throw"),
+    },
+  },
+  carrot: {
+    label: "Carrot",
+    static: versionCatToyAsset("/assets/cat-toys/toys/carrot_static.png"),
+    drop: {
+      frameDurationMs: Math.round(TOY_DROP_DURATION_MS / TOY_ACTION_FRAME_COUNT),
+      durationMs: TOY_DROP_DURATION_MS,
+      frames: createToyFrames("carrot", "drop"),
+    },
+    throw: {
+      frameDurationMs: Math.round(TOY_THROW_DURATION_MS / TOY_ACTION_FRAME_COUNT),
+      durationMs: TOY_THROW_DURATION_MS,
+      frames: createToyFrames("carrot", "throw"),
+    },
+  },
+};
+const toyOptions = Object.entries(toyAssets).map(([toyType, asset]) => ({
+  toyType,
+  ...asset,
+}));
+const toyActionOptions = [
+  { actionType: "drop", label: "Drop", icon: ArrowDownToLine },
+  { actionType: "throw", label: "Throw", icon: SendHorizontal },
+];
+
+function createToyFrames(toyType, actionType) {
+  return Array.from(
+    { length: TOY_ACTION_FRAME_COUNT },
+    (_, index) =>
+      versionCatToyAsset(
+        `/assets/cat-toys/${toyType}/${actionType}/frames/${toyType}_${actionType}_${String(index + 1).padStart(2, "0")}.png`
+      )
+  );
+}
 
 function createCatFrames(basePath, action) {
   return Array.from(
     { length: 10 },
-    (_, index) => `${basePath}/${action}/${action}_${String(index + 1).padStart(2, "0")}.png`
+    (_, index) =>
+      versionCatAsset(`${basePath}/${action}/${action}_${String(index + 1).padStart(2, "0")}.png`)
   );
 }
 
@@ -93,10 +163,50 @@ function createCatAction(basePath, action) {
   };
 }
 
+function createCatToyFrames(catType, toyType) {
+  return Array.from(
+    { length: 10 },
+    (_, index) =>
+      versionCatToyAsset(
+        `/assets/cat-toys/${catType}/${toyType}/frames/${catType}_${toyType}_rolltoy_${String(index + 1).padStart(2, "0")}.png`
+      )
+  );
+}
+
+function createCatToyAction(catType, toyType) {
+  return {
+    label: CAT_ACTION_LABELS.rolling_over_with_toy,
+    frameDurationMs: CAT_FRAME_DURATIONS.rolling_over_with_toy,
+    loop: false,
+    playDurationMs: TOY_PLAY_DURATION_MS,
+    frames: createCatToyFrames(catType, toyType),
+  };
+}
+
+const catToyAnimations = {
+  calico: {
+    chili: {
+      rolling_over_with_toy: createCatToyAction("calico", "chili"),
+    },
+    carrot: {
+      rolling_over_with_toy: createCatToyAction("calico", "carrot"),
+    },
+  },
+  tuxedo: {
+    chili: {
+      rolling_over_with_toy: createCatToyAction("tuxedo", "chili"),
+    },
+    carrot: {
+      rolling_over_with_toy: createCatToyAction("tuxedo", "carrot"),
+    },
+  },
+};
+
 const catSpritePacks = {
   calico: {
     label: "Calico",
     scale: 0.42,
+    toyAnimations: catToyAnimations.calico,
     actions: {
       idle: {
         ...createCatAction("/assets/cat/idle-walk-smooth", "idle"),
@@ -118,6 +228,7 @@ const catSpritePacks = {
   snow: {
     label: "Snow",
     scale: 0.4,
+    toyAnimations: catToyAnimations.tuxedo,
     actions: Object.fromEntries(
       CAT_TAP_MODES.map((action) => [action, createCatAction("/assets/cat/tuxedo", action)])
     ),
@@ -491,6 +602,7 @@ function AnimatedCat({
   autoWalk,
   target,
   requestedAction,
+  requestedToyType,
   onModeChange,
   onActionComplete,
   onTargetReached,
@@ -508,17 +620,28 @@ function AnimatedCat({
   const baseFrameRafRef = React.useRef(null);
   const baseFrameStartedAtRef = React.useRef(0);
   const actionCompletedRef = React.useRef(false);
-  const activeAction = CAT_BASE_ACTIONS.has(requestedAction)
-    ? null
-    : spritePack.actions[requestedAction] || null;
+  const activeAction = React.useMemo(() => {
+    if (CAT_BASE_ACTIONS.has(requestedAction)) return null;
+    if (requestedAction === "rolling_over_with_toy") {
+      return spritePack.toyAnimations?.[requestedToyType]?.rolling_over_with_toy || null;
+    }
+
+    return spritePack.actions[requestedAction] || null;
+  }, [requestedAction, requestedToyType, spritePack]);
   const [frameIndex, setFrameIndex] = React.useState(0);
   const [baseFrameIndex, setBaseFrameIndex] = React.useState(0);
+  const [failedFrameSources, setFailedFrameSources] = React.useState(() => new Set());
   const [catState, setCatState] = React.useState({
     isMoving: false,
     direction: 1,
   });
   const spriteFrameSources = React.useMemo(
-    () => Object.values(spritePack.actions).flatMap((action) => action.frames),
+    () => [
+      ...Object.values(spritePack.actions).flatMap((action) => action.frames),
+      ...Object.values(spritePack.toyAnimations || {}).flatMap((toyConfig) =>
+        Object.values(toyConfig).flatMap((action) => action.frames)
+      ),
+    ],
     [spritePack]
   );
 
@@ -688,7 +811,7 @@ function AnimatedCat({
     clearCatTimers();
     setCatState((state) => ({ ...state, isMoving: false }));
 
-    if (requestedAction !== "jumping") {
+    if (requestedAction !== "jumping" || target) {
       syncCatJumpVisual(0);
       return undefined;
     }
@@ -711,6 +834,11 @@ function AnimatedCat({
 
   React.useEffect(() => {
     if (!target) return;
+    if (target.motion === "jump") {
+      jumpTo(target, onTargetReached);
+      return;
+    }
+
     walkTo(target, onTargetReached);
   }, [target, onTargetReached]);
 
@@ -734,8 +862,18 @@ function AnimatedCat({
         return;
       }
 
+      if (!activeAction.loop && activeAction.playDurationMs && elapsed < activeAction.playDurationMs) {
+        setFrameIndex(nextFrame % activeAction.frames.length);
+        frameRafRef.current = window.requestAnimationFrame(step);
+        return;
+      }
+
       if (nextFrame >= activeAction.frames.length) {
-        setFrameIndex(activeAction.frames.length - 1);
+        setFrameIndex(
+          activeAction.playDurationMs
+            ? Math.max(nextFrame - 1, 0) % activeAction.frames.length
+            : activeAction.frames.length - 1
+        );
         if (!actionCompletedRef.current) {
           actionCompletedRef.current = true;
           onActionComplete?.();
@@ -760,7 +898,24 @@ function AnimatedCat({
   const currentCatState = activeAction ? requestedAction : baseState;
   const baseAnimation = spritePack.actions[baseState];
   const baseFrame = baseAnimation.frames[baseFrameIndex % baseAnimation.frames.length];
-  const smoothFrame = activeAction?.frames[frameIndex] || baseFrame;
+  const actionFrame = activeAction?.frames[frameIndex] || null;
+  const fallbackAction = requestedAction === "rolling_over_with_toy" ? spritePack.actions.rolling_over : null;
+  const fallbackFrame = fallbackAction?.frames[frameIndex % fallbackAction.frames.length] || baseFrame;
+  const smoothFrame = actionFrame && !failedFrameSources.has(actionFrame) ? actionFrame : fallbackFrame;
+  const toyFallbackAsset =
+    requestedAction === "rolling_over_with_toy" ? toyAssets[requestedToyType]?.static : null;
+  const shouldRenderToyFallback =
+    Boolean(toyFallbackAsset) && (!actionFrame || failedFrameSources.has(actionFrame));
+
+  function handleFrameError() {
+    if (!actionFrame || failedFrameSources.has(actionFrame)) return;
+
+    setFailedFrameSources((sources) => {
+      const nextSources = new Set(sources);
+      nextSources.add(actionFrame);
+      return nextSources;
+    });
+  }
 
   React.useEffect(() => {
     baseFrameStartedAtRef.current = performance.now();
@@ -802,7 +957,15 @@ function AnimatedCat({
       }}
     >
       <div className="cat-ground-shadow" />
-      <img className="cat-frame" src={smoothFrame} alt="" draggable="false" />
+      <img className="cat-frame" src={smoothFrame} alt="" draggable="false" onError={handleFrameError} />
+      {shouldRenderToyFallback && (
+        <img
+          className={`cat-toy-fallback cat-toy-fallback-${requestedToyType}`}
+          src={toyFallbackAsset}
+          alt=""
+          draggable="false"
+        />
+      )}
     </div>
   );
 }
@@ -891,16 +1054,44 @@ function CatDuoInteraction({ position, onComplete }) {
   );
 }
 
+function GardenToy({ toy }) {
+  const asset = toyAssets[toy.toyType];
+  if (!asset || !toy.isActive || toy.isCaught) return null;
+  const action = asset[toy.actionType];
+  const isAnimating = toy.state === "dropping" || toy.state === "throwing";
+  const frame = action?.frames[toy.frameIndex] || asset.static;
+
+  return (
+    <img
+      className={`garden-toy garden-toy-${toy.state}`}
+      src={isAnimating ? frame : asset.static}
+      alt=""
+      draggable="false"
+      style={{
+        left: `${toy.x}%`,
+        top: `${toy.y}%`,
+        zIndex: Math.round(toy.y * 10) + 8,
+      }}
+    />
+  );
+}
+
 function GardenScene({
   flowers,
   currentFlower,
   plantMode,
+  selectedToyType,
+  selectedToyAction,
+  toys,
   catWalking,
   catTarget,
   catAction,
+  catToyType,
   catSpawn,
   snowWalking,
+  snowTarget,
   snowAction,
+  snowToyType,
   snowSpawn,
   duoInteraction,
   onCatTarget,
@@ -910,14 +1101,22 @@ function GardenScene({
   onCalicoPositionChange,
   onSnowModeChange,
   onSnowActionComplete,
+  onSnowTargetReached,
   onSnowPositionChange,
   onDuoInteractionComplete,
+  onToyDrop,
   onPlant,
 }) {
   function handleGardenClick(event) {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 100;
     const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+    if (selectedToyType && !duoInteraction) {
+      if (!isPointOnGarden(x, y)) return;
+      onToyDrop({ toyType: selectedToyType, actionType: selectedToyAction, x, y });
+      return;
+    }
 
     if (plantMode) {
       if (!isPointOnGarden(x, y)) return;
@@ -932,7 +1131,7 @@ function GardenScene({
 
   return (
     <section
-      className={`garden-stage ${plantMode ? "is-planting" : ""}`}
+      className={`garden-stage ${plantMode ? "is-planting" : ""} ${selectedToyType ? "is-toying" : ""}`}
       aria-label="Garden island"
     >
       <div className="sky-glow" />
@@ -963,6 +1162,9 @@ function GardenScene({
             }}
           />
         ))}
+        {toys.map((toy) => (
+          <GardenToy key={toy.id} toy={toy} />
+        ))}
         {duoInteraction ? (
           <CatDuoInteraction
             key={duoInteraction.id}
@@ -977,6 +1179,7 @@ function GardenScene({
               autoWalk={catWalking}
               target={catTarget}
               requestedAction={catAction}
+              requestedToyType={catToyType}
               onModeChange={onCatModeChange}
               onTargetReached={onCatTargetReached}
               onActionComplete={onCatActionComplete}
@@ -986,9 +1189,12 @@ function GardenScene({
               key={`snow-${snowSpawn.version}`}
               initialPosition={snowSpawn.position}
               autoWalk={snowWalking}
+              target={snowTarget}
               requestedAction={snowAction}
+              requestedToyType={snowToyType}
               onModeChange={onSnowModeChange}
               onActionComplete={onSnowActionComplete}
+              onTargetReached={onSnowTargetReached}
               onPositionChange={onSnowPositionChange}
             />
           </>
@@ -1064,6 +1270,52 @@ function TemplatePicker({ selectedFlower, onSelect }) {
             <span>{template.name}</span>
           </button>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function ToyPicker({ selectedToyType, selectedToyAction, onSelect, onActionSelect }) {
+  return (
+    <section className="toy-panel" aria-labelledby="toy-title">
+      <div className="section-heading">
+        <h2 id="toy-title">Toys</h2>
+      </div>
+      <div className="toy-grid" role="group" aria-label="Toy selection">
+        {toyOptions.map((toy) => (
+          <button
+            key={toy.toyType}
+            className={selectedToyType === toy.toyType ? "toy-button active" : "toy-button"}
+            type="button"
+            onClick={() => onSelect(toy.toyType)}
+            aria-pressed={selectedToyType === toy.toyType}
+          >
+            <img src={toy.static} alt="" />
+            <span>{toy.label}</span>
+          </button>
+        ))}
+      </div>
+      <div className="toy-action-row" role="group" aria-label="Toy action">
+        {toyActionOptions.map((option) => {
+          const Icon = option.icon;
+
+          return (
+            <button
+              key={option.actionType}
+              className={
+                selectedToyAction === option.actionType
+                  ? "toy-action-button active"
+                  : "toy-action-button"
+              }
+              type="button"
+              onClick={() => onActionSelect(option.actionType)}
+              aria-pressed={selectedToyAction === option.actionType}
+            >
+              <Icon size={17} aria-hidden="true" />
+              {option.label}
+            </button>
+          );
+        })}
       </div>
     </section>
   );
@@ -1154,6 +1406,9 @@ function App() {
   const [brushSize, setBrushSize] = React.useState(9);
   const [tool, setTool] = React.useState("brush");
   const [plantMode, setPlantMode] = React.useState(true);
+  const [selectedToyType, setSelectedToyType] = React.useState(null);
+  const [selectedToyAction, setSelectedToyAction] = React.useState("drop");
+  const [toys, setToys] = React.useState([]);
   const [catSpawn, setCatSpawn] = React.useState({
     position: CAT_WAYPOINTS[0],
     version: 0,
@@ -1161,12 +1416,15 @@ function App() {
   const [catWalking, setCatWalking] = React.useState(false);
   const [catTarget, setCatTarget] = React.useState(null);
   const [catAction, setCatAction] = React.useState("idle");
+  const [catToyType, setCatToyType] = React.useState(null);
   const [snowSpawn, setSnowSpawn] = React.useState({
     position: SNOW_WAYPOINTS[0],
     version: 0,
   });
   const [snowWalking, setSnowWalking] = React.useState(false);
+  const [snowTarget, setSnowTarget] = React.useState(null);
   const [snowAction, setSnowAction] = React.useState("idle");
+  const [snowToyType, setSnowToyType] = React.useState(null);
   const [duoInteraction, setDuoInteraction] = React.useState(null);
   const [isMusicPlaying, setIsMusicPlaying] = React.useState(false);
   const [showGallery, setShowGallery] = React.useState(false);
@@ -1175,16 +1433,34 @@ function App() {
   const calicoPositionRef = React.useRef(CAT_WAYPOINTS[0]);
   const snowPositionRef = React.useRef(SNOW_WAYPOINTS[0]);
   const duoInteractionRef = React.useRef(null);
+  const toysRef = React.useRef([]);
+  const caughtToyIdsRef = React.useRef(new Set());
   const duoCanTriggerRef = React.useRef(true);
   const duoCooldownUntilRef = React.useRef(0);
   const backgroundAudioRef = React.useRef(null);
+  const toyPreloadSources = React.useMemo(
+    () =>
+      Object.values(toyAssets).flatMap((asset) => [
+        asset.static,
+        ...asset.drop.frames,
+        ...asset.throw.frames,
+      ]),
+    []
+  );
+
+  usePreloadImages(toyPreloadSources);
 
   React.useEffect(() => {
     duoInteractionRef.current = duoInteraction;
   }, [duoInteraction]);
 
+  React.useEffect(() => {
+    toysRef.current = toys;
+  }, [toys]);
+
   const completeCatAction = React.useCallback(() => {
     setCatAction("idle");
+    setCatToyType(null);
   }, []);
 
   const startBackgroundAudio = React.useCallback(() => {
@@ -1221,6 +1497,7 @@ function App() {
 
   const completeSnowAction = React.useCallback(() => {
     setSnowAction("idle");
+    setSnowToyType(null);
   }, []);
 
   const updateCalicoPosition = React.useCallback((position) => {
@@ -1231,8 +1508,81 @@ function App() {
     snowPositionRef.current = position;
   }, []);
 
+  React.useEffect(() => {
+    let rafId;
+
+    function tick(now) {
+      setToys((currentToys) => {
+        let didChange = false;
+        const nextToys = currentToys.map((toy) => {
+          if (!toy.isActive || toy.isCaught || (toy.state !== "dropping" && toy.state !== "throwing")) {
+            return toy;
+          }
+
+          const action = toyAssets[toy.toyType]?.[toy.actionType];
+          if (!action) return toy;
+
+          const elapsed = Math.max(now - toy.spawnedAt, 0);
+          const progress = Math.min(elapsed / action.durationMs, 1);
+          const frameIndex = Math.min(
+            action.frames.length - 1,
+            Math.floor(progress * action.frames.length)
+          );
+          let x = toy.targetX;
+          let y = toy.targetY;
+
+          if (toy.actionType === "throw") {
+            x = lerp(toy.startX, toy.targetX, easeInOut(progress));
+            y =
+              lerp(toy.startY, toy.targetY, easeInOut(progress)) -
+              Math.sin(progress * Math.PI) * 10;
+          }
+
+          const state = progress >= 1 ? "settled" : toy.state;
+          const settledAt = progress >= 1 ? toy.settledAt || now : toy.settledAt;
+          const nextToy = {
+            ...toy,
+            x,
+            y,
+            frameIndex,
+            state,
+            settledAt,
+            velocityX: toy.actionType === "throw" ? toy.velocityX : 0,
+            velocityY: toy.actionType === "throw" ? toy.velocityY : 0,
+          };
+
+          if (
+            nextToy.x !== toy.x ||
+            nextToy.y !== toy.y ||
+            nextToy.frameIndex !== toy.frameIndex ||
+            nextToy.state !== toy.state ||
+            nextToy.settledAt !== toy.settledAt
+          ) {
+            didChange = true;
+            return nextToy;
+          }
+
+          return toy;
+        });
+
+        return didChange ? nextToys : currentToys;
+      });
+
+      rafId = window.requestAnimationFrame(tick);
+    }
+
+    rafId = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, []);
+
   const setCalicoMode = React.useCallback((mode) => {
     setCatTarget(null);
+    setCatToyType(null);
 
     if (mode === "walk") {
       setCatAction("idle");
@@ -1245,6 +1595,9 @@ function App() {
   }, []);
 
   const setSnowMode = React.useCallback((mode) => {
+    setSnowTarget(null);
+    setSnowToyType(null);
+
     if (mode === "walk") {
       setSnowAction("idle");
       setSnowWalking(true);
@@ -1258,12 +1611,81 @@ function App() {
   const moveCatToTarget = React.useCallback((target) => {
     setCatWalking(false);
     setCatAction("idle");
+    setCatToyType(null);
     setCatTarget({ ...target, id: crypto.randomUUID() });
   }, []);
 
   const clearCatTarget = React.useCallback(() => {
     setCatTarget(null);
   }, []);
+
+  const clearSnowTarget = React.useCallback(() => {
+    setSnowTarget(null);
+  }, []);
+
+  const assignToyToCat = React.useCallback(
+    (toy) => {
+      if (!toy || duoInteractionRef.current || toy.targetedByCatId) return;
+
+      const candidates = [
+        {
+          catId: CAT_IDS.calico,
+          position: calicoPositionRef.current,
+          isAvailable: !catTarget && !CAT_ONE_SHOT_ACTIONS.has(catAction),
+          chase: () => {
+            setCatWalking(false);
+            setCatToyType(null);
+            setCatAction("jumping");
+            setCatTarget({ x: toy.targetX, y: toy.targetY, id: toy.id, motion: "jump" });
+          },
+        },
+        {
+          catId: CAT_IDS.snow,
+          position: snowPositionRef.current,
+          isAvailable: !snowTarget && !CAT_ONE_SHOT_ACTIONS.has(snowAction),
+          chase: () => {
+            setSnowWalking(false);
+            setSnowToyType(null);
+            setSnowAction("jumping");
+            setSnowTarget({ x: toy.targetX, y: toy.targetY, id: toy.id, motion: "jump" });
+          },
+        },
+      ].filter((candidate) => candidate.isAvailable);
+
+      if (candidates.length === 0) return;
+
+      const target = candidates.reduce((closest, candidate) => {
+        const distance = distanceBetweenPoints(candidate.position, toy);
+        return distance < closest.distance ? { ...candidate, distance } : closest;
+      }, { distance: Infinity });
+
+      setToys((currentToys) =>
+        currentToys.map((currentToy) =>
+          currentToy.id === toy.id
+            ? { ...currentToy, targetedByCatId: target.catId }
+            : currentToy
+        )
+      );
+      target.chase();
+    },
+    [catAction, catTarget, snowAction, snowTarget]
+  );
+
+  React.useEffect(() => {
+    if (duoInteraction) return;
+
+    const settledToy = toys.find(
+      (toy) =>
+        toy.isActive &&
+        !toy.isCaught &&
+        toy.state === "settled" &&
+        !toy.targetedByCatId
+    );
+
+    if (settledToy) {
+      assignToyToCat(settledToy);
+    }
+  }, [assignToyToCat, duoInteraction, toys]);
 
   const cycleCatMode = React.useCallback(() => {
     const currentMode = catWalking ? "walk" : catAction;
@@ -1334,6 +1756,12 @@ function App() {
 
         duoCanTriggerRef.current = false;
         setCatTarget(null);
+        setSnowTarget(null);
+        setToys((currentToys) =>
+          currentToys.map((toy) =>
+            toy.isActive ? { ...toy, isActive: false, isCaught: true } : toy
+          )
+        );
         setDuoInteraction({
           id: crypto.randomUUID(),
           position,
@@ -1353,9 +1781,77 @@ function App() {
     };
   }, [catAction, duoInteraction, snowAction]);
 
+  React.useEffect(() => {
+    if (duoInteraction) return undefined;
+
+    let rafId;
+
+    function catchToy(toy) {
+      if (caughtToyIdsRef.current.has(toy.id)) return;
+      caughtToyIdsRef.current.add(toy.id);
+
+      setToys((currentToys) =>
+        currentToys.map((currentToy) =>
+          currentToy.id === toy.id
+            ? {
+                ...currentToy,
+                state: "caught",
+                isActive: false,
+                isCaught: true,
+                velocityX: 0,
+                velocityY: 0,
+              }
+            : currentToy
+        )
+      );
+
+      if (toy.targetedByCatId === CAT_IDS.snow) {
+        setSnowWalking(false);
+        setSnowTarget(null);
+        setSnowToyType(toy.toyType);
+        setSnowAction("rolling_over_with_toy");
+        return;
+      }
+
+      setCatWalking(false);
+      setCatTarget(null);
+      setCatToyType(toy.toyType);
+      setCatAction("rolling_over_with_toy");
+    }
+
+    function tick() {
+      const activeToy = toysRef.current.find(
+        (toy) => toy.isActive && !toy.isCaught && toy.state === "settled" && toy.targetedByCatId
+      );
+
+      if (activeToy) {
+        const catPosition =
+          activeToy.targetedByCatId === CAT_IDS.snow
+            ? snowPositionRef.current
+            : calicoPositionRef.current;
+        const distance = distanceBetweenPoints(catPosition, activeToy);
+
+        if (distance <= TOY_CATCH_DISTANCE) {
+          catchToy(activeToy);
+        }
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    }
+
+    rafId = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, [duoInteraction]);
+
   function saveFlower(image) {
     setGarden((garden) => ({ ...garden, currentFlower: image }));
     setPlantMode(true);
+    setSelectedToyType(null);
   }
 
   function plantFlower({ x, y }) {
@@ -1372,11 +1868,58 @@ function App() {
 
   function resetGarden() {
     setGarden((garden) => ({ ...garden, flowers: [] }));
+    setToys([]);
+    caughtToyIdsRef.current.clear();
   }
 
   function selectTemplate(image) {
     setGarden((garden) => ({ ...garden, currentFlower: image }));
     setPlantMode(true);
+    setSelectedToyType(null);
+  }
+
+  function selectToy(toyType) {
+    setSelectedToyType(toyType);
+    setPlantMode(true);
+  }
+
+  function dropToy({ toyType, actionType, x, y }) {
+    if (duoInteractionRef.current) return;
+
+    const point = clampToGarden(x, y);
+    const startPoint =
+      actionType === "throw"
+        ? clampToGarden(point.x - 18, point.y + 9)
+        : point;
+    const now = performance.now();
+    const duration = toyAssets[toyType]?.[actionType]?.durationMs || TOY_DROP_DURATION_MS;
+    const toy = {
+      id: crypto.randomUUID(),
+      toyType,
+      actionType,
+      state: actionType === "throw" ? "throwing" : "dropping",
+      x: startPoint.x,
+      y: startPoint.y,
+      startX: startPoint.x,
+      startY: startPoint.y,
+      targetX: point.x,
+      targetY: point.y,
+      velocityX: (point.x - startPoint.x) / duration,
+      velocityY: (point.y - startPoint.y) / duration,
+      frameIndex: 0,
+      spawnedAt: now,
+      settledAt: null,
+      isActive: true,
+      isCaught: false,
+      targetedByCatId: null,
+    };
+
+    caughtToyIdsRef.current.delete(toy.id);
+    setToys((currentToys) => [
+      ...currentToys.filter((currentToy) => currentToy.isActive && !currentToy.isCaught).slice(-2),
+      toy,
+    ]);
+    setDuoInteraction(null);
   }
 
   return (
@@ -1385,13 +1928,19 @@ function App() {
         flowers={flowers}
         currentFlower={currentFlower}
         plantMode={plantMode}
+        selectedToyType={selectedToyType}
+        selectedToyAction={selectedToyAction}
+        toys={toys}
         catSpawn={catSpawn}
         catWalking={catWalking}
         catTarget={catTarget}
         catAction={catAction}
+        catToyType={catToyType}
         snowSpawn={snowSpawn}
         snowWalking={snowWalking}
+        snowTarget={snowTarget}
         snowAction={snowAction}
+        snowToyType={snowToyType}
         duoInteraction={duoInteraction}
         onCatTarget={moveCatToTarget}
         onCatTargetReached={clearCatTarget}
@@ -1400,8 +1949,10 @@ function App() {
         onCalicoPositionChange={updateCalicoPosition}
         onSnowModeChange={cycleSnowMode}
         onSnowActionComplete={completeSnowAction}
+        onSnowTargetReached={clearSnowTarget}
         onSnowPositionChange={updateSnowPosition}
         onDuoInteractionComplete={completeDuoInteraction}
+        onToyDrop={dropToy}
         onPlant={plantFlower}
       />
 
@@ -1420,7 +1971,10 @@ function App() {
           <button
             className={plantMode ? "mode-button active" : "mode-button"}
             type="button"
-            onClick={() => setPlantMode(true)}
+            onClick={() => {
+              setPlantMode(true);
+              setSelectedToyType(null);
+            }}
           >
             <MousePointer2 size={17} aria-hidden="true" />
             Plant
@@ -1428,7 +1982,10 @@ function App() {
           <button
             className={!plantMode ? "mode-button active" : "mode-button"}
             type="button"
-            onClick={() => setPlantMode(false)}
+            onClick={() => {
+              setPlantMode(false);
+              setSelectedToyType(null);
+            }}
           >
             <Brush size={17} aria-hidden="true" />
             Draw
@@ -1517,9 +2074,20 @@ function App() {
 
         {plantMode && (
           <div className="plant-card">
-            <img src={currentFlower} alt="" />
-            <p>Click the island to plant the selected flower.</p>
-            <button className="primary-action" type="button" onClick={() => setPlantMode(false)}>
+            <img src={selectedToyType ? toyAssets[selectedToyType].static : currentFlower} alt="" />
+            <p>
+              {selectedToyType
+                ? `Click the island to ${selectedToyAction} the ${toyAssets[selectedToyType].label.toLowerCase()}.`
+                : "Click the island to plant the selected flower."}
+            </p>
+            <button
+              className="primary-action"
+              type="button"
+              onClick={() => {
+                setPlantMode(false);
+                setSelectedToyType(null);
+              }}
+            >
               <Flower2 size={18} aria-hidden="true" />
               Draw a flower
             </button>
@@ -1527,6 +2095,13 @@ function App() {
         )}
 
         <TemplatePicker selectedFlower={currentFlower} onSelect={selectTemplate} />
+
+        <ToyPicker
+          selectedToyType={selectedToyType}
+          selectedToyAction={selectedToyAction}
+          onSelect={selectToy}
+          onActionSelect={setSelectedToyAction}
+        />
 
         <section className="cat-controls" aria-labelledby="cat-controls-title">
           <div className="section-heading">

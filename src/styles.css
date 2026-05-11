@@ -67,6 +67,10 @@ button {
   cursor: crosshair;
 }
 
+.garden-stage.is-toying {
+  cursor: copy;
+}
+
 .sky-glow {
   position: absolute;
   inset: 0;
@@ -164,6 +168,22 @@ button {
   pointer-events: none;
 }
 
+.garden-toy {
+  position: absolute;
+  width: clamp(74px, 12.9%, 129px);
+  transform: translate(-50%, -82%);
+  transform-origin: 50% 82%;
+  pointer-events: none;
+  user-select: none;
+  object-fit: contain;
+  filter: drop-shadow(0 9px 5px rgba(40, 65, 35, 0.22));
+}
+
+.garden-toy-dropping,
+.garden-toy-throwing {
+  width: clamp(90px, 15.2%, 154px);
+}
+
 .garden-decor-flower {
   position: absolute;
   width: var(--decor-width);
@@ -220,6 +240,7 @@ button {
   --cat-shadow-hop-y: 0px;
   --cat-shadow-opacity: 1;
   --cat-shadow-scale: 1;
+  --cat-action-scale: 1;
   position: absolute;
   left: var(--cat-x);
   top: var(--cat-y);
@@ -228,7 +249,7 @@ button {
   pointer-events: auto;
   cursor: pointer;
   touch-action: manipulation;
-  transform: translate3d(-50%, calc(-96.5% + var(--cat-hop-y)), 0) scale(var(--cat-scale)) scaleX(var(--cat-direction));
+  transform: translate3d(-50%, calc(-96.5% + var(--cat-hop-y)), 0) scale(var(--cat-scale)) scale(var(--cat-action-scale)) scaleX(var(--cat-direction));
   transform-origin: 50% 96.5%;
   will-change: left, top, transform;
   z-index: var(--cat-depth);
@@ -243,6 +264,10 @@ button {
   transition: none;
 }
 
+.animated-cat.cat-state-jumping {
+  --cat-action-scale: 1.25;
+}
+
 .cat-frame {
   position: absolute;
   inset: 0;
@@ -252,6 +277,26 @@ button {
   object-fit: contain;
   transform-origin: 50% 96.5%;
   user-select: none;
+}
+
+.cat-toy-fallback {
+  position: absolute;
+  left: 239px;
+  top: 321px;
+  width: 92px;
+  height: 92px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 6px 3px rgba(40, 65, 35, 0.18));
+  transform: translate(-50%, -50%) rotate(-10deg);
+  transform-origin: 50% 50%;
+  animation: cat-toy-play-wiggle 960ms steps(4, end) infinite;
+}
+
+.cat-toy-fallback-carrot {
+  width: 104px;
+  height: 104px;
 }
 
 .cat-ground-shadow {
@@ -307,6 +352,21 @@ button {
   border-radius: 50%;
   background: rgba(35, 55, 31, 0.21);
   filter: blur(11px);
+}
+
+@keyframes cat-toy-play-wiggle {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(-12deg) scale(1);
+  }
+
+  33% {
+    transform: translate(-47%, -54%) rotate(8deg) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-53%, -48%) rotate(-4deg) scale(0.98);
+  }
 }
 
 .tool-panel {
@@ -437,6 +497,8 @@ h2 {
 .icon-button:hover,
 .cat-control-button:hover,
 .template-button:hover,
+.toy-button:hover,
+.toy-action-button:hover,
 .gallery-flower:hover {
   transform: translateY(-1px);
 }
@@ -533,7 +595,8 @@ h2 {
   line-height: 1.45;
 }
 
-.template-panel {
+.template-panel,
+.toy-panel {
   display: grid;
   gap: 0.65rem;
 }
@@ -588,6 +651,77 @@ h2 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.toy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.toy-action-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.toy-button,
+.toy-action-button {
+  display: grid;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #40523e;
+  font-weight: 850;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.toy-button {
+  grid-template-columns: 3rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 3.35rem;
+  padding: 0.42rem 0.55rem;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.toy-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  min-height: 2.4rem;
+  padding: 0 0.6rem;
+  font-size: 0.82rem;
+}
+
+.toy-button.active,
+.toy-action-button.active {
+  background: #ffffff;
+  box-shadow:
+    0 0 0 2px rgba(220, 95, 67, 0.34),
+    0 7px 16px rgba(86, 68, 43, 0.1);
+}
+
+.toy-button img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 3px rgba(55, 72, 40, 0.16));
+}
+
+.toy-button span {
+  min-width: 0;
+  line-height: 1.08;
 }
 
 .utility-row {
@@ -1030,6 +1164,10 @@ h2 {
 
   .template-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .toy-button {
+    grid-template-columns: 2.7rem minmax(0, 1fr);
   }
 
   .utility-row {

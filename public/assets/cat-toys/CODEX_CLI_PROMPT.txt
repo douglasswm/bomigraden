@@ -1,0 +1,55 @@
+I replaced the previous toy action export with a corrected no-panel-lines sprite pack at:
+
+public/assets/cat-toys/
+
+Please migrate the toy action system to use this corrected pack and stop using the older toy action frames that had gray divider lines.
+
+Corrected static toy sprites:
+- public/assets/cat-toys/toys/carrot_static.png
+- public/assets/cat-toys/toys/chili_static.png
+
+Corrected drop action frames:
+- public/assets/cat-toys/carrot/drop/frames/carrot_drop_01.png through carrot_drop_05.png
+- public/assets/cat-toys/chili/drop/frames/chili_drop_01.png through chili_drop_05.png
+
+Corrected throw action frames:
+- public/assets/cat-toys/carrot/throw/frames/carrot_throw_01.png through carrot_throw_05.png
+- public/assets/cat-toys/chili/throw/frames/chili_throw_01.png through chili_throw_05.png
+
+Corrected packed sheets:
+- public/assets/cat-toys/carrot/drop/carrot_drop_sheet_5x1.png
+- public/assets/cat-toys/carrot/throw/carrot_throw_sheet_5x1.png
+- public/assets/cat-toys/chili/drop/chili_drop_sheet_5x1.png
+- public/assets/cat-toys/chili/throw/chili_throw_sheet_5x1.png
+
+Manifest:
+- public/assets/cat-toys/sprite_manifest.json
+
+Sprite details:
+- every individual frame is 512 x 512 transparent PNG
+- drop animations have 5 frames
+- throw animations have 5 frames
+- packed sheets are 5 columns x 1 row
+- suggested anchor/origin is bottom-center at x: 256, y: 494
+- the corrected exports do not contain gray divider/panel lines
+
+Implementation requirements:
+1. Find the existing toy action asset config.
+2. Replace any old toy action asset references with the corrected paths above.
+3. Use the static sprites for the toy selection UI and settled toy state.
+4. Use drop frames when the user drops a toy into the garden.
+5. Use throw frames when the user throws a toy into the garden.
+6. After drop/throw finishes, render the static toy sprite.
+7. When a cat collides with the toy, hide/deactivate the free toy entity and switch the cat to the existing rolling_over_with_toy flow.
+8. Do not double-render the free toy while rolling_over_with_toy is active, because the cat-with-toy animation already includes the toy.
+9. Preserve existing cat behavior, existing toy behavior, garden layout, and responsiveness.
+10. Preload the toy action frames to avoid flicker.
+11. Run the normal build/typecheck/lint command if available and fix any issues.
+
+At the end, summarize:
+- which files changed
+- which old gray-line asset references were replaced
+- which corrected asset paths are now used
+- how drop and throw animations are triggered
+- how the toy transitions to settled/static state
+- how the toy is hidden after cat collision

@@ -15,3 +15,14 @@
 - For sprite jump modes, frame cycling alone reads as jumping in place; add a visible position/vector offset and shadow response so the action travels.
 - If a user asks for jump behavior to work like walk mode, update the cat's actual waypoint position over time, not just a local CSS transform offset.
 - On the GardenLetters-style card, keep the signature above the envelope front flap; avoid `margin-top: auto` in the letter copy because it can push the sender behind the mask.
+- For sprite-pack animation assets, inspect the actual per-frame PNG pixels for baked preview/checker backgrounds; `hasAlpha` alone does not prove the visible background is transparent.
+- When removing baked sprite backgrounds, restore from source before a new cleanup pass and preserve foreground-connected neutral pixels; aggressive neutral-key removal can punch holes into white paws or toy highlights.
+- For pale cat sprites, validate cleaned frames on a strong green/background-contrast contact sheet and in-browser at garden scale; white fur and muzzle pixels can be misclassified even when the full-size asset looks mostly correct.
+- For dark tuxedo sprites, distinguish real white markings from baked light floor patches by testing walk frames on a contrast background; remove broad lower low-saturation components, not every white pixel.
+- If tuxedo paw markings get punched out, back off to the conservative segmentation result and tolerate tiny contact flecks; preserving the animal anatomy is more important than deleting every pale edge pixel.
+- When the user says the floor is acceptable, do not remove the whole lower light strip; use targeted leg-gap masks so only the white holes between legs become transparent.
+- When the user later says there is still too much white, remove broad pale floor/background components but restore compact paw pixels from original frames around detected leg endpoints; avoid restoring long horizontal floor strips.
+- When requested baked interaction sprite frames are absent from disk, do not silently fall back to a plain character animation; render a clear toy-specific fallback or stop and call out the missing asset before verification.
+- For cat-with-toy playbacks, keep frame timing slower than standard rolling so the embedded toy pose reads clearly at garden scale.
+- For tuxedo-with-toy frames, remove connected white exterior/base components conservatively; aggressive low-saturation removal can cut holes into carrot artwork.
+- When adjusting garden sprite scale, prefer state-specific CSS variables so jump scaling does not affect idle, walk, or toy-play sizes.
