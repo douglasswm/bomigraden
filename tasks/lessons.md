@@ -26,3 +26,4 @@
 - For cat-with-toy playbacks, keep frame timing slower than standard rolling so the embedded toy pose reads clearly at garden scale.
 - For tuxedo-with-toy frames, remove connected white exterior/base components conservatively; aggressive low-saturation removal can cut holes into carrot artwork.
 - When adjusting garden sprite scale, prefer state-specific CSS variables so jump scaling does not affect idle, walk, or toy-play sizes.
+- If a cleanup pass punches holes in tuxedo/carrot toy-play art, restore from `garden_cat_toy_sprite_pack_clean_transparent` and use a floor-only mask; do not use broad near-transparent white fringe removal on the whole sprite.

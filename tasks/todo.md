@@ -6,6 +6,9 @@ Integrate the full cat toy system into the garden scene using the provided `publ
 
 ## Plan
 
+- [x] Restore tuxedo/carrot toy-play frames from the clean source pack after over-cleaning punched holes.
+- [x] Apply a floor-only cleanup that preserves carrot artwork, paws, and tuxedo markings.
+- [x] Regenerate tuxedo/carrot packed sheets and verify with a contrast contact sheet.
 - [x] Inspect tuxedo/carrot toy-play frames on a high-contrast background.
 - [x] Clean rough white outline artifacts without removing tuxedo white markings or carrot highlights.
 - [ ] Verify cleaned frames visually and with the normal build.
@@ -49,3 +52,4 @@ Integrate the full cat toy system into the garden scene using the provided `publ
 - Correction follow-up: slowed `rolling_over_with_toy` frame timing from 240ms to 380ms per frame so the toy-play poses read more clearly.
 - Correction follow-up: cleaned rough white exterior/base artifacts from the 10 tuxedo/carrot `rolling_over_with_toy` frame PNGs and regenerated the matching 5x2 packed sheets.
 - Correction follow-up: increased cats by 25% only while in `jumping` state and increased in-garden toy sprite sizing by 15%.
+- Correction follow-up: restored tuxedo/carrot toy-play frames from the clean source pack and replaced the over-broad white-fringe cleanup with a floor-only mask to avoid punching holes in the carrot/cat art.
