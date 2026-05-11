@@ -6,6 +6,9 @@ Integrate the full cat toy system into the garden scene using the provided `publ
 
 ## Plan
 
+- [x] Identify the tuxedo/carrot frame with the hind-leg hole by diffing cleaned frames against the clean source pack.
+- [x] Restore the affected hind-leg pixels without bringing back the broad white base.
+- [x] Regenerate packed sheets, build, and verify on a contrast contact sheet.
 - [x] Restore tuxedo/carrot toy-play frames from the clean source pack after over-cleaning punched holes.
 - [x] Apply a floor-only cleanup that preserves carrot artwork, paws, and tuxedo markings.
 - [x] Regenerate tuxedo/carrot packed sheets and verify with a contrast contact sheet.
@@ -53,3 +56,5 @@ Integrate the full cat toy system into the garden scene using the provided `publ
 - Correction follow-up: cleaned rough white exterior/base artifacts from the 10 tuxedo/carrot `rolling_over_with_toy` frame PNGs and regenerated the matching 5x2 packed sheets.
 - Correction follow-up: increased cats by 25% only while in `jumping` state and increased in-garden toy sprite sizing by 15%.
 - Correction follow-up: restored tuxedo/carrot toy-play frames from the clean source pack and replaced the over-broad white-fringe cleanup with a floor-only mask to avoid punching holes in the carrot/cat art.
+- Correction follow-up: used OpenCV connected-component diffing against the clean source pack to restore the 1,080-pixel hind-leg component in `tuxedo_carrot_rolltoy_06.png`.
+- Correction follow-up: used OpenCV to remove only the thin near-transparent exterior white shell above the protected lower body band across all tuxedo/carrot toy-play frames.

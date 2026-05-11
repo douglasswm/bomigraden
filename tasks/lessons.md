@@ -27,3 +27,5 @@
 - For tuxedo-with-toy frames, remove connected white exterior/base components conservatively; aggressive low-saturation removal can cut holes into carrot artwork.
 - When adjusting garden sprite scale, prefer state-specific CSS variables so jump scaling does not affect idle, walk, or toy-play sizes.
 - If a cleanup pass punches holes in tuxedo/carrot toy-play art, restore from `garden_cat_toy_sprite_pack_clean_transparent` and use a floor-only mask; do not use broad near-transparent white fringe removal on the whole sprite.
+- When a single tuxedo/carrot frame still has a hind-leg hole after floor cleanup, compare against the clean source frame and restore the local leg component instead of relaxing the whole cleanup mask.
+- For rough white outlines on tuxedo/carrot toy-play frames, remove only the thin exterior shell near transparency above the floor band; keep the lower leg/body band protected after restoring punched pixels.
