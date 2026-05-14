@@ -35,3 +35,4 @@
 - When a wrapper component exposes the same prop as a generic component, update and test the wrapper default too; changing only the inner component default may have no visible effect.
 - When adding a new animation state for an existing character, integrate it into one character controller that switches states; do not render a second copy of the character as a demo.
 - For multi-pet garden scenes, pick each pet's initial waypoint away from the other pets' initial/default path clusters so characters do not start stacked or visually competing.
+- If dependency folders were accidentally committed, add `.gitignore` first and use `git rm --cached -r node_modules` so local installs remain intact while the repository stops tracking them.
