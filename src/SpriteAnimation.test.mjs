@@ -4,6 +4,7 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import {
   CorgiIdleSprite,
+  CorgiWalkSprite,
   SpriteAnimation,
   getSpriteAnimationStyle,
   getSpriteBackgroundPosition,
@@ -40,6 +41,7 @@ test("sprite frame helpers calculate sheet positions left-to-right, row by row",
   assert.equal(getSpriteBackgroundPosition(4, 320, 448, 5), "-1280px 0px");
   assert.equal(getSpriteBackgroundPosition(5, 320, 448, 5), "0px -448px");
   assert.equal(getSpriteBackgroundPosition(9, 320, 448, 5), "-1280px -448px");
+  assert.equal(getSpriteBackgroundPosition(9, 416, 352, 5), "-1664px -352px");
 });
 
 test("sprite frame helpers advance at fps and loop correctly", () => {
@@ -80,4 +82,39 @@ test("CorgiIdleSprite uses idle defaults and accepts interaction callbacks", () 
   assert.match(html, /data-animation-fps="2"/);
   assert.match(html, /data-animation-name="idle"/);
   assert.equal(style.backgroundPosition, "-1280px -448px");
+});
+
+test("CorgiWalkSprite uses walk spritesheet defaults and accepts direction, speed, and callbacks", () => {
+  const handleClick = () => {};
+  const handleHover = () => {};
+  const html = renderToStaticMarkup(
+    React.createElement(CorgiWalkSprite, {
+      playing: false,
+      className: "garden-corgi-walker",
+      direction: "left",
+      speed: 1.5,
+      onClick: handleClick,
+      onMouseEnter: handleHover,
+      onMouseLeave: handleHover,
+    })
+  );
+  const style = getSpriteAnimationStyle({
+    src: "/assets/corgi_walk_sprite_pack/spritesheets/corgi_walk_sheet_5x2_416x352.png",
+    frameIndex: 9,
+    frameWidth: 416,
+    frameHeight: 352,
+    frameCount: 10,
+    columns: 5,
+    rows: 2,
+  });
+
+  assert.match(html, /class="sprite-animation corgi-walk-sprite garden-corgi-walker"/);
+  assert.match(html, /aria-label="Walking corgi animation"/);
+  assert.match(html, /data-animation-fps="8"/);
+  assert.match(html, /data-animation-name="walk"/);
+  assert.match(html, /data-direction="left"/);
+  assert.match(html, /data-speed="1.5"/);
+  assert.match(html, /--sprite-direction:-1/);
+  assert.match(html, /--sprite-speed:1.5/);
+  assert.equal(style.backgroundPosition, "-1664px -352px");
 });

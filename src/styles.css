@@ -233,21 +233,39 @@ button {
   flex: 0 0 auto;
 }
 
-.garden-corgi {
-  --corgi-scale-desktop: 0.399;
-  --corgi-scale-mobile: 0.319;
+.animated-corgi {
+  --corgi-scale-desktop: 0.426;
+  --corgi-scale-mobile: 0.333;
   --corgi-scale: var(--corgi-scale-desktop);
+  --corgi-x: 31%;
+  --corgi-y: 62%;
+  --corgi-depth: 620;
   position: absolute;
-  left: 31%;
-  top: 62%;
+  left: var(--corgi-x);
+  top: var(--corgi-y);
+  width: 416px;
+  height: 448px;
   pointer-events: auto;
   user-select: none;
   cursor: default;
-  transform: translate3d(-50%, -94.6%, 0) scale(var(--corgi-scale));
-  transform-origin: 50% 94.6%;
+  transform: translate3d(-50%, -94.32%, 0) scale(var(--corgi-scale));
+  transform-origin: 50% 94.32%;
   filter: drop-shadow(0 11px 6px rgba(40, 65, 35, 0.22));
-  will-change: background-position;
-  z-index: 750;
+  will-change: left, top, transform;
+  z-index: var(--corgi-depth);
+}
+
+.animated-corgi .sprite-animation {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  transform-origin: 50% 94.32%;
+  will-change: background-position, transform;
+}
+
+.animated-corgi .corgi-walk-sprite {
+  transform: translateX(-50%) scaleX(var(--sprite-direction));
 }
 
 .animated-cat {
@@ -1176,7 +1194,7 @@ h2 {
     --duo-scale: var(--duo-scale-mobile);
   }
 
-  .garden-corgi {
+  .animated-corgi {
     --corgi-scale: var(--corgi-scale-mobile);
   }
 

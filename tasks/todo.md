@@ -121,3 +121,29 @@ Slow the corgi idle animation, make the in-garden corgi 33% larger, and move it 
 - Follow-up: reduced `CorgiIdleSprite` default playback to the requested 2 fps.
 - Correction: the visible garden corgi was still using `CorgiIdleSprite`'s wrapper default of 8 fps; changed that wrapper default to 2 fps and added a render assertion for `data-animation-fps="2"`.
 - Follow-up: applied the same 2 fps idle pacing to both cats by changing cat idle frame duration to 500ms.
+
+## Objective: Corgi Walk Sprite
+
+Create or reuse an animated sprite interaction component for the corgi walking sprite pack, using the packed spritesheet and integrating it into the garden/pet UI.
+
+## Plan
+
+- [x] Inspect current sprite component, tests, garden integration, and locate the walking pack.
+- [x] Confirm walking metadata: 5 columns, 2 rows, 10 frames, 416x352, 8 fps, looping, walk animation.
+- [x] Reuse `SpriteAnimation` and add a `CorgiWalkSprite` wrapper with `direction` and `speed` props.
+- [x] Copy walking spritesheet/metadata under `public/assets/corgi_walk_sprite_pack/`.
+- [x] Add a garden example that moves the corgi across an island path using the walking spritesheet.
+- [x] Add tests for walking defaults, frame math, rendered attrs, and interaction callback prop acceptance.
+- [x] Run available verification commands and document results.
+
+## Review
+
+- Added `CorgiWalkSprite` as a wrapper around `SpriteAnimation`, using the 5x2, 416x352, 10-frame, 8fps looping walking spritesheet.
+- Extended `SpriteAnimation` to accept and render `direction` and `speed` metadata props while preserving optional click/hover callbacks.
+- Copied walking spritesheet and metadata to `public/assets/corgi_walk_sprite_pack/`.
+- Added an `AnimatedCorgi` garden controller so there is only one corgi: it rests with the idle spritesheet and walks between garden waypoints with the walking spritesheet.
+- Increased the walking corgi display scale by 33% after feedback, from the original `0.32` walking scale target to `0.426`.
+- Moved the corgi starting waypoint away from the cats' starting positions to the lower-left island path.
+- Added test coverage for walking frame background math, 8fps walk defaults, direction/speed props, and callback prop acceptance.
+- Verification: `npm test` passed 5 tests.
+- Verification: `npm run build` succeeded.

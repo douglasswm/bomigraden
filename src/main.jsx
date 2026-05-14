@@ -16,7 +16,7 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { CorgiIdleSprite } from "./SpriteAnimation.js";
+import { CorgiIdleSprite, CorgiWalkSprite } from "./SpriteAnimation.js";
 import "./styles.css";
 
 const CANVAS_SIZE = 220;
@@ -65,6 +65,14 @@ const SNOW_WAYPOINTS = [
   { x: 63, y: 73 },
   { x: 78, y: 69 },
 ];
+const CORGI_WAYPOINTS = [
+  { x: 18, y: 65 },
+  { x: 36, y: 79 },
+  { x: 58, y: 74 },
+  { x: 73, y: 61 },
+];
+const CORGI_WALK_DURATION = 7800;
+const CORGI_REST_DURATION = 3200;
 const CAT_FRAME_DURATIONS = {
   idle: 500,
   walk: 125,
@@ -995,6 +1003,117 @@ function SnowCat({ initialPosition = SNOW_WAYPOINTS[0], ...props }) {
   );
 }
 
+function AnimatedCorgi({ waypoints = CORGI_WAYPOINTS, initialPosition = waypoints[0], speed = 1 }) {
+  const corgiRef = React.useRef(null);
+  const waypointRef = React.useRef(0);
+  const positionRef = React.useRef(initialPosition);
+  const rafRef = React.useRef(null);
+  const restTimerRef = React.useRef(null);
+  const lastTickRef = React.useRef(0);
+  const [corgiState, setCorgiState] = React.useState({
+    isMoving: false,
+    direction: "right",
+  });
+
+  function syncCorgiPosition(position) {
+    if (!corgiRef.current) return;
+    corgiRef.current.style.setProperty("--corgi-x", `${position.x}%`);
+    corgiRef.current.style.setProperty("--corgi-y", `${position.y}%`);
+    corgiRef.current.style.setProperty("--corgi-depth", Math.round(position.y * 10));
+  }
+
+  function clearCorgiTimers() {
+    window.clearTimeout(restTimerRef.current);
+    if (rafRef.current) {
+      window.cancelAnimationFrame(rafRef.current);
+    }
+  }
+
+  function walkTo(next, onComplete) {
+    clearCorgiTimers();
+    const current = positionRef.current;
+    const distance = distanceBetweenPoints(current, next);
+    const duration = Math.max(2400, Math.min(CORGI_WALK_DURATION, (distance * 190) / speed));
+    const startedAt = performance.now();
+
+    setCorgiState({
+      isMoving: true,
+      direction: next.x < current.x ? "left" : "right",
+    });
+
+    function step(now) {
+      if (now - lastTickRef.current < CAT_TICK_MS) {
+        rafRef.current = window.requestAnimationFrame(step);
+        return;
+      }
+
+      lastTickRef.current = now;
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = easeInOut(progress);
+      const position = {
+        x: lerp(current.x, next.x, eased),
+        y: lerp(current.y, next.y, eased),
+      };
+
+      positionRef.current = position;
+      syncCorgiPosition(position);
+
+      if (progress < 1) {
+        rafRef.current = window.requestAnimationFrame(step);
+        return;
+      }
+
+      positionRef.current = next;
+      syncCorgiPosition(next);
+      setCorgiState((state) => ({ ...state, isMoving: false }));
+      onComplete?.();
+    }
+
+    rafRef.current = window.requestAnimationFrame(step);
+  }
+
+  React.useEffect(() => {
+    positionRef.current = initialPosition;
+    syncCorgiPosition(initialPosition);
+  }, [initialPosition]);
+
+  React.useEffect(() => {
+    function startWalk() {
+      const nextIndex = (waypointRef.current + 1) % waypoints.length;
+      const next = waypoints[nextIndex];
+
+      waypointRef.current = nextIndex;
+      walkTo(next, () => {
+        restTimerRef.current = window.setTimeout(startWalk, CORGI_REST_DURATION);
+      });
+    }
+
+    restTimerRef.current = window.setTimeout(startWalk, 900);
+
+    return clearCorgiTimers;
+  }, [speed, waypoints]);
+
+  return (
+    <div
+      ref={corgiRef}
+      className={`animated-corgi ${corgiState.isMoving ? "is-walking" : "is-idle"}`}
+      role="img"
+      aria-label={`Corgi ${corgiState.isMoving ? "walking" : "resting"} in the garden`}
+      style={{
+        "--corgi-x": `${initialPosition.x}%`,
+        "--corgi-y": `${initialPosition.y}%`,
+        "--corgi-depth": Math.round(initialPosition.y * 10),
+      }}
+    >
+      {corgiState.isMoving ? (
+        <CorgiWalkSprite decorative direction={corgiState.direction} speed={speed} />
+      ) : (
+        <CorgiIdleSprite decorative />
+      )}
+    </div>
+  );
+}
+
 function CatDuoInteraction({ position, onComplete }) {
   const [frameIndex, setFrameIndex] = React.useState(0);
   const frameRafRef = React.useRef(null);
@@ -1166,11 +1285,7 @@ function GardenScene({
         {toys.map((toy) => (
           <GardenToy key={toy.id} toy={toy} />
         ))}
-        <CorgiIdleSprite
-          className="garden-corgi"
-          ariaLabel="A resting corgi sitting in the garden"
-          decorative={false}
-        />
+        <AnimatedCorgi speed={1} />
         {duoInteraction ? (
           <CatDuoInteraction
             key={duoInteraction.id}

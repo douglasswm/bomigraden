@@ -1,0 +1,233 @@
+{
+  "name": "corgi_walk",
+  "animation": "walk",
+  "description": "10-frame walking corgi sprite pack extracted from generated art, painterly garden-style look, no outfit, no tail.",
+  "frameCount": 10,
+  "columns": 5,
+  "rows": 2,
+  "fps": 8,
+  "loop": true,
+  "frameWidth": 416,
+  "frameHeight": 352,
+  "sheet": "spritesheets/corgi_walk_sheet_5x2_416x352.png",
+  "frames": [
+    {
+      "index": 0,
+      "file": "frames/corgi_walk_00.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 41,
+        "y0": 62,
+        "x1": 383,
+        "y1": 350
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 1,
+      "file": "frames/corgi_walk_01.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 437,
+        "y0": 66,
+        "x1": 779,
+        "y1": 351
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 2,
+      "file": "frames/corgi_walk_02.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 830,
+        "y0": 66,
+        "x1": 1182,
+        "y1": 348
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 3,
+      "file": "frames/corgi_walk_03.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 1229,
+        "y0": 66,
+        "x1": 1572,
+        "y1": 351
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 4,
+      "file": "frames/corgi_walk_04.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 1605,
+        "y0": 66,
+        "x1": 1949,
+        "y1": 352
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 5,
+      "file": "frames/corgi_walk_05.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 43,
+        "y0": 444,
+        "x1": 389,
+        "y1": 728
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 6,
+      "file": "frames/corgi_walk_06.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 413,
+        "y0": 446,
+        "x1": 764,
+        "y1": 727
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 7,
+      "file": "frames/corgi_walk_07.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 817,
+        "y0": 451,
+        "x1": 1182,
+        "y1": 730
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 8,
+      "file": "frames/corgi_walk_08.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 1246,
+        "y0": 454,
+        "x1": 1572,
+        "y1": 730
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    },
+    {
+      "index": 9,
+      "file": "frames/corgi_walk_09.png",
+      "duration_ms": 125,
+      "source_box": {
+        "x0": 1605,
+        "y0": 454,
+        "x1": 1940,
+        "y1": 730
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 352
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9432
+      }
+    }
+  ],
+  "notes": {
+    "direction": "right",
+    "frameOrder": "left-to-right, top-to-bottom",
+    "recommendedAnchor": {
+      "x": 0.5,
+      "y": 0.9432
+    }
+  }
+}

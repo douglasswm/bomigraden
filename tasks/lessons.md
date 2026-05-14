@@ -33,3 +33,5 @@
 - If a user says an idle sprite is still too fast after one slowdown, make a more decisive timing change; for gentle resting animals, prefer around 4 fps over small incremental fps tweaks.
 - When a user gives an exact sprite timing target, apply that exact fps value instead of continuing to estimate.
 - When a wrapper component exposes the same prop as a generic component, update and test the wrapper default too; changing only the inner component default may have no visible effect.
+- When adding a new animation state for an existing character, integrate it into one character controller that switches states; do not render a second copy of the character as a demo.
+- For multi-pet garden scenes, pick each pet's initial waypoint away from the other pets' initial/default path clusters so characters do not start stacked or visually competing.

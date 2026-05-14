@@ -59,6 +59,8 @@ export function SpriteAnimation({
   playing = true,
   className = "",
   animationName = "idle",
+  direction = "right",
+  speed = 1,
   ariaLabel,
   decorative = false,
   onClick,
@@ -132,6 +134,8 @@ export function SpriteAnimation({
     onMouseLeave,
     "data-animation-fps": fps,
     "data-animation-name": animationName,
+    "data-direction": direction,
+    "data-speed": speed,
     ...accessibilityProps,
   });
 }
@@ -164,5 +168,48 @@ export function CorgiIdleSprite({
     className: `corgi-idle-sprite ${className}`.trim(),
     animationName: "idle",
     ariaLabel,
+  });
+}
+
+export function CorgiWalkSprite({
+  src = "/assets/corgi_walk_sprite_pack/spritesheets/corgi_walk_sheet_5x2_416x352.png",
+  frameWidth = 416,
+  frameHeight = 352,
+  frameCount = 10,
+  columns = 5,
+  rows = 2,
+  fps = 8,
+  loop = true,
+  playing = true,
+  className = "",
+  direction = "right",
+  speed = 1,
+  ariaLabel = "Walking corgi animation",
+  style,
+  ...props
+}) {
+  const directionScale = direction === "left" ? -1 : 1;
+
+  return React.createElement(SpriteAnimation, {
+    ...props,
+    src,
+    frameWidth,
+    frameHeight,
+    frameCount,
+    columns,
+    rows,
+    fps,
+    loop,
+    playing,
+    direction,
+    speed,
+    className: `corgi-walk-sprite ${className}`.trim(),
+    animationName: "walk",
+    ariaLabel,
+    style: {
+      "--sprite-direction": directionScale,
+      "--sprite-speed": speed,
+      ...style,
+    },
   });
 }
