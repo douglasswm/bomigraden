@@ -2,9 +2,45 @@
 
 ## Objective
 
-Integrate the full cat toy system into the garden scene using the provided `public/assets/cat-toys/` pack: toy selection, Drop/Throw modes, animated free toy entities, cat jump response, collision, and `rolling_over_with_toy` cat playback keyed by cat type and toy type.
+Create or reuse an animated sprite interaction component for the corgi idle sprite pack, using the packed spritesheet and integrating it into the existing garden/pet UI.
 
 ## Plan
+
+- [x] Review project lessons and inspect current garden/cat animation implementation.
+- [x] Locate the corgi idle sprite pack and confirm metadata/spritesheet settings.
+- [x] Add a reusable spritesheet animation component using CSS background-position plus requestAnimationFrame.
+- [x] Copy/wire the corgi spritesheet under the existing public asset convention.
+- [x] Add the corgi idle example to the garden scene without costume/accessory/tail states.
+- [x] Add focused tests for render output, frame positioning, looping, and interaction callback prop acceptance.
+- [x] Run available package verification commands and document exact outcomes.
+
+## Notes
+
+- Existing cat animations are frame-array based, but the corgi requirement prefers spritesheet rendering.
+- The corgi pack exists at `corgi_idle_sprite_pack/` with `spritesheets/corgi_idle_sheet_5x2_320x448.png` and matching metadata.
+- Package scripts initially include `dev`, `build`, and `preview`; there is no existing lint or test script.
+
+## Review
+
+- Added `src/SpriteAnimation.js` with `SpriteAnimation`, `CorgiIdleSprite`, and pure frame helpers.
+- `SpriteAnimation` renders a div-based spritesheet with CSS `background-position`, `requestAnimationFrame` timing, configurable `src`, `frameWidth`, `frameHeight`, `frameCount`, `columns`, `rows`, `fps`, `loop`, `playing`, `className`, and optional click/hover callbacks.
+- Added accessible defaults with `role="img"` and a corgi aria-label, plus a `decorative` option for `aria-hidden`.
+- Copied the corgi spritesheet and metadata to `public/assets/corgi_idle_sprite_pack/`.
+- Added a resting corgi example to the garden scene using the 5x2, 320x448, 10-frame, 8fps looping spritesheet.
+- Added `src/SpriteAnimation.test.mjs` and an `npm test` script.
+- Verification: `npm test` passed 4 tests covering render output, frame positions, looping/clamping, and callback prop acceptance.
+- Verification: `npm run build` succeeded.
+- Verification: local Vite served the root page with HTTP 200 during smoke check.
+- Verification: local Vite served the new corgi spritesheet path with HTTP 200 after rerunning the asset check outside the sandbox.
+- Note: there is no lint script in `package.json`.
+
+## Previous Task Snapshot
+
+### Objective
+
+Integrate the full cat toy system into the garden scene using the provided `public/assets/cat-toys/` pack: toy selection, Drop/Throw modes, animated free toy entities, cat jump response, collision, and `rolling_over_with_toy` cat playback keyed by cat type and toy type.
+
+### Plan
 
 - [x] Identify the tuxedo/carrot frame with the hind-leg hole by diffing cleaned frames against the clean source pack.
 - [x] Restore the affected hind-leg pixels without bringing back the broad white base.
@@ -28,13 +64,13 @@ Integrate the full cat toy system into the garden scene using the provided `publ
 - [x] Copy clean transparent `rolling_over_with_toy` frame assets from the root pack into `public/assets/cat-toys/`.
 - [x] Verify the real cat-with-toy frames render instead of the fallback overlay.
 
-## Notes
+### Notes
 
 - Existing code already has a partial toy flow, but it currently points at non-existent `chili_plush.png` and `carrot_plush.png` files.
 - The current repo contains `public/assets/cat-toys/toys/*_static.png` plus toy drop/throw frames.
 - As of inspection, `public/assets/cat-toys/calico/...` and `public/assets/cat-toys/tuxedo/...` `rolltoy` frame folders are not present, although the app can be wired to those expected paths and guarded with fallback behavior.
 
-## Review
+### Review
 
 - Added `toyAssets` for carrot/chili static sprites plus 5-frame drop and throw frame arrays.
 - Added `catToyAnimations` for the expected calico/tuxedo and carrot/chili `rolling_over_with_toy` frame paths.
@@ -58,3 +94,30 @@ Integrate the full cat toy system into the garden scene using the provided `publ
 - Correction follow-up: restored tuxedo/carrot toy-play frames from the clean source pack and replaced the over-broad white-fringe cleanup with a floor-only mask to avoid punching holes in the carrot/cat art.
 - Correction follow-up: used OpenCV connected-component diffing against the clean source pack to restore the 1,080-pixel hind-leg component in `tuxedo_carrot_rolltoy_06.png`.
 - Correction follow-up: used OpenCV to remove only the thin near-transparent exterior white shell above the protected lower body band across all tuxedo/carrot toy-play frames.
+
+## Follow-up: Corgi Idle Tuning
+
+### Objective
+
+Slow the corgi idle animation, make the in-garden corgi 33% larger, and move it to a different position.
+
+### Plan
+
+- [x] Reduce the corgi idle default fps from the original fast playback.
+- [x] Increase the garden corgi CSS scale by 33% on desktop and mobile.
+- [x] Move the garden corgi to a different resting position on the island.
+- [x] Run tests and build verification.
+- [x] Capture the correction pattern in `tasks/lessons.md`.
+
+### Review
+
+- Reduced `CorgiIdleSprite` default playback from 8 fps to 6 fps.
+- Increased `.garden-corgi` scale by 33%: desktop `0.3` to `0.399`, mobile `0.24` to `0.319`.
+- Moved `.garden-corgi` from `left: 79%; top: 75%` to `left: 31%; top: 62%`.
+- Added a lesson about verifying sprite speed and size at garden scale.
+- Verification: `npm test` passed 4 tests.
+- Verification: `npm run build` succeeded.
+- Follow-up: reduced `CorgiIdleSprite` default playback again from 6 fps to 4 fps after the first slowdown still read too fast.
+- Follow-up: reduced `CorgiIdleSprite` default playback to the requested 2 fps.
+- Correction: the visible garden corgi was still using `CorgiIdleSprite`'s wrapper default of 8 fps; changed that wrapper default to 2 fps and added a render assertion for `data-animation-fps="2"`.
+- Follow-up: applied the same 2 fps idle pacing to both cats by changing cat idle frame duration to 500ms.

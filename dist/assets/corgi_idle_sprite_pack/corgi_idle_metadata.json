@@ -1,0 +1,247 @@
+{
+  "name": "corgi_idle",
+  "description": "10-frame idle animation sprite pack of the corgi, sitting upright/resting, no outfit and no visible tail.",
+  "frame_count": 10,
+  "fps": 8,
+  "loop": true,
+  "layout": {
+    "columns": 5,
+    "rows": 2,
+    "frame_width": 320,
+    "frame_height": 448
+  },
+  "spritesheet": "spritesheets/corgi_idle_sheet_5x2_320x448.png",
+  "spritesheet_small": "spritesheets/corgi_idle_sheet_5x2_256x358.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "corgi_idle_00",
+      "file": "frames/corgi_idle_00.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 0,
+        "y": 0,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 61,
+        "y": 103,
+        "w": 256,
+        "h": 387
+      }
+    },
+    {
+      "index": 1,
+      "name": "corgi_idle_01",
+      "file": "frames/corgi_idle_01.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 320,
+        "y": 0,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 357,
+        "y": 103,
+        "w": 256,
+        "h": 387
+      }
+    },
+    {
+      "index": 2,
+      "name": "corgi_idle_02",
+      "file": "frames/corgi_idle_02.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 640,
+        "y": 0,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 658,
+        "y": 113,
+        "w": 246,
+        "h": 377
+      }
+    },
+    {
+      "index": 3,
+      "name": "corgi_idle_03",
+      "file": "frames/corgi_idle_03.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 960,
+        "y": 0,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 936,
+        "y": 103,
+        "w": 258,
+        "h": 387
+      }
+    },
+    {
+      "index": 4,
+      "name": "corgi_idle_04",
+      "file": "frames/corgi_idle_04.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 1280,
+        "y": 0,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 1223,
+        "y": 126,
+        "w": 247,
+        "h": 364
+      }
+    },
+    {
+      "index": 5,
+      "name": "corgi_idle_05",
+      "file": "frames/corgi_idle_05.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 0,
+        "y": 448,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 59,
+        "y": 562,
+        "w": 255,
+        "h": 393
+      }
+    },
+    {
+      "index": 6,
+      "name": "corgi_idle_06",
+      "file": "frames/corgi_idle_06.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 320,
+        "y": 448,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 350,
+        "y": 561,
+        "w": 259,
+        "h": 394
+      }
+    },
+    {
+      "index": 7,
+      "name": "corgi_idle_07",
+      "file": "frames/corgi_idle_07.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 640,
+        "y": 448,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 640,
+        "y": 564,
+        "w": 259,
+        "h": 391
+      }
+    },
+    {
+      "index": 8,
+      "name": "corgi_idle_08",
+      "file": "frames/corgi_idle_08.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 960,
+        "y": 448,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 937,
+        "y": 558,
+        "w": 252,
+        "h": 397
+      }
+    },
+    {
+      "index": 9,
+      "name": "corgi_idle_09",
+      "file": "frames/corgi_idle_09.png",
+      "duration_ms": 125,
+      "spritesheet_frame": {
+        "x": 1280,
+        "y": 448,
+        "w": 320,
+        "h": 448
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.946
+      },
+      "source_component_bbox": {
+        "x": 1220,
+        "y": 571,
+        "w": 246,
+        "h": 384
+      }
+    }
+  ],
+  "recommended_anchor": {
+    "x": 0.5,
+    "y": 0.946
+  },
+  "notes": [
+    "Transparent PNG exports; the generated checkerboard background was removed.",
+    "Frames are ordered left-to-right, top row first, then bottom row.",
+    "Use 8 fps for a gentle idle loop, or 6 fps for a slower resting feel.",
+    "The dog remains undressed and has no visible tail."
+  ]
+}

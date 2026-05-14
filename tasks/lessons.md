@@ -29,3 +29,7 @@
 - If a cleanup pass punches holes in tuxedo/carrot toy-play art, restore from `garden_cat_toy_sprite_pack_clean_transparent` and use a floor-only mask; do not use broad near-transparent white fringe removal on the whole sprite.
 - When a single tuxedo/carrot frame still has a hind-leg hole after floor cleanup, compare against the clean source frame and restore the local leg component instead of relaxing the whole cleanup mask.
 - For rough white outlines on tuxedo/carrot toy-play frames, remove only the thin exterior shell near transparency above the floor band; keep the lower leg/body band protected after restoring punched pixels.
+- When a newly added resting sprite reads too fast or too small in the garden, tune the actual integrated component scale and fps immediately, then verify at garden scale instead of relying on pack metadata defaults.
+- If a user says an idle sprite is still too fast after one slowdown, make a more decisive timing change; for gentle resting animals, prefer around 4 fps over small incremental fps tweaks.
+- When a user gives an exact sprite timing target, apply that exact fps value instead of continuing to estimate.
+- When a wrapper component exposes the same prop as a generic component, update and test the wrapper default too; changing only the inner component default may have no visible effect.

@@ -16,6 +16,7 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
+import { CorgiIdleSprite } from "./SpriteAnimation.js";
 import "./styles.css";
 
 const CANVAS_SIZE = 220;
@@ -65,7 +66,7 @@ const SNOW_WAYPOINTS = [
   { x: 78, y: 69 },
 ];
 const CAT_FRAME_DURATIONS = {
-  idle: 220,
+  idle: 500,
   walk: 125,
   sleeping: 260,
   jumping: 240,
@@ -1165,6 +1166,11 @@ function GardenScene({
         {toys.map((toy) => (
           <GardenToy key={toy.id} toy={toy} />
         ))}
+        <CorgiIdleSprite
+          className="garden-corgi"
+          ariaLabel="A resting corgi sitting in the garden"
+          decorative={false}
+        />
         {duoInteraction ? (
           <CatDuoInteraction
             key={duoInteraction.id}

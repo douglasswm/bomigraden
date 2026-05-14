@@ -228,6 +228,28 @@ button {
   top: 72%;
 }
 
+.sprite-animation {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.garden-corgi {
+  --corgi-scale-desktop: 0.399;
+  --corgi-scale-mobile: 0.319;
+  --corgi-scale: var(--corgi-scale-desktop);
+  position: absolute;
+  left: 31%;
+  top: 62%;
+  pointer-events: auto;
+  user-select: none;
+  cursor: default;
+  transform: translate3d(-50%, -94.6%, 0) scale(var(--corgi-scale));
+  transform-origin: 50% 94.6%;
+  filter: drop-shadow(0 11px 6px rgba(40, 65, 35, 0.22));
+  will-change: background-position;
+  z-index: 750;
+}
+
 .animated-cat {
   --cat-scale-desktop: 0.42;
   --cat-scale-mobile: 0.36;
@@ -1152,6 +1174,10 @@ h2 {
 
   .cat-duo-interaction {
     --duo-scale: var(--duo-scale-mobile);
+  }
+
+  .garden-corgi {
+    --corgi-scale: var(--corgi-scale-mobile);
   }
 
   .brand-row {
